@@ -1,0 +1,216 @@
+{
+  "main": {
+    "id": "29ea3dfe1898c817",
+    "type": "split",
+    "children": [
+      {
+        "id": "54c80fd7ce329476",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a82c04c2b05495c5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Explotación/SSTI - Server-Side Template Injection.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "SSTI - Server-Side Template Injection"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "7728b4de780c22ae",
+    "type": "split",
+    "children": [
+      {
+        "id": "6d2eb2604281871b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b8dcb96b3eb4c7f4",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Explorador de archivos"
+            }
+          },
+          {
+            "id": "e88c34e5ca7dfc6e",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:#lfi",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Buscar"
+            }
+          },
+          {
+            "id": "f0244d32117f957e",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Marcadores"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 348.50418853759766
+  },
+  "right": {
+    "id": "54c055a3c46af602",
+    "type": "split",
+    "children": [
+      {
+        "id": "d12dfb1b0822398c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4ddb63b464221ae1",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Explotación/XSS - Cross Site Scripting.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Enlaces entrantes de XSS - Cross Site Scripting"
+            }
+          },
+          {
+            "id": "9f835762aaa0be9e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Explotación/XSS - Cross Site Scripting.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Enlaces salientes de XSS - Cross Site Scripting"
+            }
+          },
+          {
+            "id": "12a5058ca235ffd0",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Etiquetas"
+            }
+          },
+          {
+            "id": "dd2ff4c37d53a035",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Explotación/XSS - Cross Site Scripting.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Esquema de XSS - Cross Site Scripting"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Abrir selector rápido": false,
+      "graph:Abrir vista gráfica": false,
+      "canvas:Crear nuevo lienzo": false,
+      "daily-notes:Abrir la nota de hoy": false,
+      "templates:Insertar plantilla": false,
+      "command-palette:Abrir paleta de comandos": false
+    }
+  },
+  "active": "a82c04c2b05495c5",
+  "lastOpenFiles": [
+    "Explotación/SSRF - Server-Side Request Forgery.md",
+    "Explotación/SSTI - Server-Side Template Injection.md",
+    "Explotación/CSRF - Cross-Site Request Forgery.md",
+    "Explotación/Log Poisoning.md",
+    "Herramientas.md",
+    "Explotación/LFI/LFI - Local File Inclusion.md",
+    "Explotación/RFI - Remote File Inclusion.md",
+    "Explotación/LFI/Php_filter_chain_generator.py.md",
+    "Uso de php_filter_chain_generator.py.md",
+    "Explotación/Payloads/Metasploit.md",
+    "Explotación/LFI",
+    "Herramientas de Explotación",
+    "Explotación/XXE – XML External Entity Injection.md",
+    "XXE - XML External Entity Injection.md",
+    "Explotación/XSS - Cross-Site Scripting.md",
+    "Explotación/SQLi/SQLi Manual.md",
+    "Explotación/SQLi/Sqlmap.md",
+    "Explotación/XXE - XML External Entity Injection.md",
+    "Enumeración/Linux/Linux-smart-enumeration.md",
+    "Enumeración/Linux",
+    "Enumeración/SO/Sin título.md",
+    "Enumeración/SO",
+    "Enumeración",
+    "Explotación/Payloads/Msfvenom.md",
+    "Explotación/SQLi",
+    "Explotación/Shells/Reverse Shell.md",
+    "Explotación/Shells/Bind Shell.md",
+    "Explotación/Payloads/Payload Staged.md",
+    "Explotación/Payloads/Payload non-Staged.md",
+    "Gestores de Contenido (CMS) 🌐​/Wordpress/Wpscan.md",
+    "Gestores de Contenido (CMS) 🌐​/Wordpress/Wordpress.md",
+    "Herramientas de Reconocimiento/Escaneo de Puertos y Servicios/Nmap.md",
+    "Imagenes/Bind Shell.png",
+    "Explotación/Payloads",
+    "Explotación/Shells",
+    "Imagenes/Forward Shell 2.png",
+    "Imagenes/Forward Shell 1.png",
+    "Imagenes/Shells",
+    "Imagenes/Reverse Shell.png",
+    "Imagenes",
+    "Pasted image 20250710170452.png",
+    "Pasted image 20250710170543.png"
+  ]
+}
