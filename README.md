@@ -1,4 +1,4 @@
-﻿# 🛡️ Hacking & Offensive Security - Master Notes (Obsidian)
+﻿# 🛡️ Hacking & Offensive Security - Master Notes (Obsidian).
 
 Este repositorio es una enciclopedia técnica de Pentesting y Red Teaming, estructurada siguiendo las fases de una auditoría real y documentando vectores de ataque críticos.
 
