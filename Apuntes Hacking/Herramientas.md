@@ -65,7 +65,7 @@
 ---
 # Pivoting
 
-- [[Pivoting en Windows – Chisel, Socat y Netsh Portproxy]]
+- [[Pivoting – Chisel, Socat y Netsh Portproxy]]
 
 ---
 # Buffer-Overflow
@@ -74,7 +74,7 @@
 - [[Buffer Overflow en Windows con Immunity Debugger + Mona]]
 - [[mona.py]]
 ---
-# Herramientas de 'Ilegales'
+# Otras Herramientas
 
 ### Botnet
 - [Creación de botnets](https://github.com/epsylon/ufonet)
