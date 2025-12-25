@@ -61,10 +61,27 @@ Clasificación detallada según el vector de ataque:
 
 ---
 
----
-
 ## ☕ Apoya mi trabajo
 
 Si estos apuntes te han sido de utilidad para tus certificaciones (eJPT, PNPT, OSCP) o laboratorios, considera apoyarme para seguir manteniendo y actualizando esta base de conocimientos.
 
 [<img src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" width="200">](https://ko-fi.com/luisrh98)
+
+---
+
+## 📜 Licencia / License
+
+<p align="center">
+  <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+    <img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?style=for-the-badge" alt="License: CC BY-NC-SA 4.0">
+    <img src="https://img.shields.io/badge/Sales-Prohibited-red?style=for-the-badge" alt="Sales Prohibited">
+  </a>
+</p>
+
+**🇪🇸 Español:**
+Este repositorio contiene apuntes personales de ciberseguridad protegidos bajo la licencia **CC BY-NC-SA 4.0**. Se permite su uso, edición y redistribución **siempre que no sea con fines comerciales**, se mantenga la misma licencia y se cite al autor original (**luisrh98**). **Queda terminantemente prohibida la venta de este contenido.**
+
+**🇺🇸 English:**
+This repository contains personal cybersecurity notes protected under the **CC BY-NC-SA 4.0** license. Usage, editing, and redistribution are allowed **provided they are not for commercial purposes**, the same license is maintained, and the original author (**luisrh98**) is credited. **Selling this content is strictly prohibited.**
+
+---
