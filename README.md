@@ -58,3 +58,13 @@ Clasificación detallada según el vector de ataque:
 
 ---
 *Organizado y mantenido como un Cerebro Digital en **Obsidian**.*
+
+---
+
+---
+
+## ☕ Apoya mi trabajo
+
+Si estos apuntes te han sido de utilidad para tus certificaciones (eJPT, PNPT, OSCP) o laboratorios, considera apoyarme para seguir manteniendo y actualizando esta base de conocimientos.
+
+[<img src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" width="200">](https://ko-fi.com/luisrh98)
