@@ -39,35 +39,18 @@
             "id": "c9ffb57a3637dad6",
             "type": "leaf",
             "state": {
-              "type": "canvas",
-              "state": {
-                "file": "Untitled.canvas",
-                "viewState": {
-                  "x": -18.662703677156316,
-                  "y": 72.33478649467327,
-                  "zoom": -1.5193997214233077
-                }
-              },
-              "icon": "lucide-layout-dashboard",
-              "title": "Untitled"
-            }
-          },
-          {
-            "id": "38c7d623b7df228a",
-            "type": "leaf",
-            "state": {
               "type": "markdown",
               "state": {
-                "file": "Apuntes Hacking/Redacción de documentos y reportes técnicos profesionales con LaTeX.md",
+                "file": "Apuntes Hacking/Explotación/SQLi/SQLi Basada en Errores Visibles.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Redacción de documentos y reportes técnicos profesionales con LaTeX"
+              "title": "SQLi Basada en Errores Visibles"
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -124,7 +107,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 614.4000000000001
+    "width": 200
   },
   "right": {
     "id": "1dd116272d524df1",
@@ -215,13 +198,22 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "072ef4ae9c537dae",
+  "active": "c9ffb57a3637dad6",
   "lastOpenFiles": [
+    "Apuntes Hacking/Explotación/SQLi/SQL Injection vía XXE (XML Injection).md",
+    "Apuntes Hacking/Explotación/SQLi/Out-of-Band SQL Injection (OOB).md",
+    "Apuntes Hacking/Explotación/SQLi/Blind SQLi conditional responses based.md",
+    "Apuntes Hacking/Explotación/SQLi/Blind SQLi conditional errors based.md",
+    "Apuntes Hacking/Explotación/SQLi/Blind SQL Injection (Time-Based).md",
+    "Apuntes Hacking/Explotación/SQLi/SQLi Manual.md",
+    "Apuntes Hacking/Explotación/SQLi/Sqlmap.md",
+    "Apuntes Hacking/Explotación/SQLi/SQLi Basada en Errores Visibles.md",
+    "ls.md",
+    "Apuntes Hacking/Redacción de documentos y reportes técnicos profesionales con LaTeX.md",
     "README.md",
     "Apuntes Hacking/Explotación/Inyecciones CSS - CSSI.md",
     "Apuntes Hacking/Explotación/Inyecciones CSS - CSSI dd.md",
     "Apuntes Hacking/Explotación/Insecure Direct Object Reference - IDORs.md",
-    "Apuntes Hacking/Redacción de documentos y reportes técnicos profesionales con LaTeX.md",
     "Apuntes Hacking/Escalada de privilegios/Abuso de permisos incorrectos.md",
     "Apuntes Hacking/Utilidades/Cómo convertir tu reverse shell en una TTY interactiva.md",
     "Apuntes Hacking/Buffer Overflow/Funcionamiento y creación manual de Shellcodes.md",
@@ -235,15 +227,6 @@
     "Apuntes Hacking/Pivoting/Pivoting en Windows – Chisel, Socat y Netsh Portproxy.md",
     "Apuntes Hacking/Buffer Overflow/Buffer Overflow en Linux usando GDB y herramientas de Metasploit (sin framework).md",
     "Apuntes Hacking/Buffer Overflow/Buffer Overflow en Windows con Immunity Debugger + Mona.md",
-    "Apuntes Hacking/Buffer Overflow/4 - Búsqueda de OpCodes para entrar al ESP y cargar el Shellcode.md",
-    "Apuntes Hacking/Buffer Overflow/3 - Generación de Bytearrays y detección de Badchars.md",
-    "Apuntes Hacking/Buffer Overflow/2 - Asignación de espacio para el Shellcode.md",
-    "Apuntes Hacking/Buffer Overflow/6 - Modificación del Shellcode para controlar el comando que se desea ejecutar.md",
-    "Apuntes Hacking/Buffer Overflow/5 - Uso de NOPs, desplazamientos en pila e interpretación del Shellcode (RCE).md",
-    "Apuntes Hacking/Buffer Overflow/mona.py.md",
-    "Apuntes Hacking/Buffer Overflow/1 - Fuzzing y control de EIP.md",
-    "Apuntes Hacking/Herramientas de Reconocimiento/Fuzzing de Directorios y Subdominios/Gobuster.md",
-    "Apuntes Hacking/Herramientas de Reconocimiento/Escaneo de Puertos y Servicios/Nmap.md",
     "Untitled.base",
     "Apuntes Hacking/Pivoting",
     "Untitled 1.base",
