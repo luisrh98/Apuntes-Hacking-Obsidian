@@ -173,10 +173,11 @@
       "copilot:Open Copilot Chat": false
     }
   },
-  "active": "1cd6bfb93cdd2df6",
+  "active": "072ef4ae9c537dae",
   "lastOpenFiles": [
-    "Apuntes Hacking/Explotación/XSS/DOM-based XSS (Full Stack).md",
+    "ls.md",
     "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+    "Apuntes Hacking/Explotación/XSS/DOM-based XSS (Full Stack).md",
     "copilot/copilot-custom-prompts/Rewrite as tweet thread.md",
     "copilot/copilot-custom-prompts/Rewrite as tweet.md",
     "copilot/copilot-custom-prompts/Remove URLs.md",
@@ -204,7 +205,6 @@
     "Apuntes Hacking/Explotación/SQLi/Blind SQLi conditional errors based.md",
     "Apuntes Hacking/Explotación/SQLi/Blind SQL Injection (Time-Based).md",
     "Apuntes Hacking/Explotación/SQLi/SQLi Manual.md",
-    "Apuntes Hacking/Explotación/SQLi/Sqlmap.md",
     "Untitled.canvas",
     "Untitled.base",
     "Apuntes Hacking/Pivoting",

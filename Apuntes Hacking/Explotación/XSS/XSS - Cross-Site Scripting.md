@@ -42,14 +42,7 @@ Tags: #cybersecurity #pentesting #bugbounty #web-security #owasp-top10 #xss #cro
 [[#8. Herramientas y Automatización]]
 	
 [[#Referencias]]
-4. [Evasión de Filtros y WAF (Bypasses)](https://www.google.com/search?q=%235-evasi%C3%B3n-de-filtros-y-waf-bypasses)
-    
-5. [Bypass de Controles de Seguridad (CSP)](https://www.google.com/search?q=%236-bypass-de-controles-de-seguridad-csp)
-    
-6. [Weaponization (Impacto Real)](https://www.google.com/search?q=%237-weaponization-impacto-real)
-    
-7. [Herramientas y Automatización](https://www.google.com/search?q=%238-herramientas-y-automatizaci%C3%B3n)
-    [[]]
+
 
 ---
 
