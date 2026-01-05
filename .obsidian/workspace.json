@@ -13,44 +13,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Apuntes Hacking/Utilidades/Cómo convertir tu reverse shell en una TTY interactiva.md",
+                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Cómo convertir tu reverse shell en una TTY interactiva"
-            }
-          },
-          {
-            "id": "36e83a628a751fea",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Apuntes Hacking/Buffer Overflow/Fuzzing y control de EIP.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Fuzzing y control de EIP"
-            }
-          },
-          {
-            "id": "c9ffb57a3637dad6",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Apuntes Hacking/Explotación/SQLi/SQLi Basada en Errores Visibles.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "SQLi Basada en Errores Visibles"
+              "title": "XSS - Cross-Site Scripting"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -171,21 +142,21 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Apuntes Hacking/Explotación/CSRF - Cross-Site Request Forgery.md",
+                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of CSRF - Cross-Site Request Forgery"
+              "title": "Outline of XSS - Cross-Site Scripting"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -195,47 +166,51 @@
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
-      "command-palette:Open command palette": false
+      "command-palette:Open command palette": false,
+      "obsidian-git:Open Git source control": false,
+      "markdown-importer:Open format converter": false,
+      "publish:Publish changes...": false,
+      "copilot:Open Copilot Chat": false
     }
   },
-  "active": "c9ffb57a3637dad6",
+  "active": "1cd6bfb93cdd2df6",
   "lastOpenFiles": [
+    "Apuntes Hacking/Explotación/XSS/DOM-based XSS (Full Stack).md",
+    "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+    "copilot/copilot-custom-prompts/Rewrite as tweet thread.md",
+    "copilot/copilot-custom-prompts/Rewrite as tweet.md",
+    "copilot/copilot-custom-prompts/Remove URLs.md",
+    "copilot/copilot-custom-prompts/Generate glossary.md",
+    "copilot/copilot-custom-prompts/Generate table of contents.md",
+    "copilot/copilot-custom-prompts/Make longer.md",
+    "copilot/copilot-custom-prompts/Make shorter.md",
+    "copilot/copilot-custom-prompts/Emojify.md",
+    "copilot/copilot-custom-prompts/Explain like I am 5.md",
+    "copilot/copilot-custom-prompts/Simplify.md",
+    "copilot/copilot-custom-prompts/Summarize.md",
+    "copilot/copilot-custom-prompts/Translate to Chinese.md",
+    "copilot/copilot-custom-prompts/Fix grammar and spelling.md",
+    "copilot/copilot-custom-prompts",
+    "copilot",
+    "Apuntes Hacking/Utilidades/Cómo convertir tu reverse shell en una TTY interactiva.md",
+    "1..md",
+    "Apuntes Hacking/Explotación/Ataque de transferencia de zona (AXFR – Full Zone Transfer).md",
     "Apuntes Hacking/Explotación/SQLi/SQL Injection vía XXE (XML Injection).md",
+    "Apuntes Hacking/Explotación/XSS",
     "Apuntes Hacking/Explotación/SQLi/Out-of-Band SQL Injection (OOB).md",
+    "Apuntes Hacking/Explotación/SQLi/SQLi Basada en Errores Visibles.md",
+    "LICENSE",
     "Apuntes Hacking/Explotación/SQLi/Blind SQLi conditional responses based.md",
     "Apuntes Hacking/Explotación/SQLi/Blind SQLi conditional errors based.md",
     "Apuntes Hacking/Explotación/SQLi/Blind SQL Injection (Time-Based).md",
     "Apuntes Hacking/Explotación/SQLi/SQLi Manual.md",
     "Apuntes Hacking/Explotación/SQLi/Sqlmap.md",
-    "Apuntes Hacking/Explotación/SQLi/SQLi Basada en Errores Visibles.md",
-    "ls.md",
-    "Apuntes Hacking/Redacción de documentos y reportes técnicos profesionales con LaTeX.md",
-    "README.md",
-    "Apuntes Hacking/Explotación/Inyecciones CSS - CSSI.md",
-    "Apuntes Hacking/Explotación/Inyecciones CSS - CSSI dd.md",
-    "Apuntes Hacking/Explotación/Insecure Direct Object Reference - IDORs.md",
-    "Apuntes Hacking/Escalada de privilegios/Abuso de permisos incorrectos.md",
-    "Apuntes Hacking/Utilidades/Cómo convertir tu reverse shell en una TTY interactiva.md",
-    "Apuntes Hacking/Buffer Overflow/Funcionamiento y creación manual de Shellcodes.md",
-    "Apuntes Hacking/Herramientas.md",
-    "Apuntes Hacking/Docker.md",
-    "Apuntes Hacking/Metasploit Framework.md",
-    "Apuntes Hacking/Uso de php_filter_chain_generator.py.md",
     "Untitled.canvas",
-    "Socat.md",
-    "Apuntes Hacking/Explotación/Payloads/Msfvenom.md",
-    "Apuntes Hacking/Pivoting/Pivoting en Windows – Chisel, Socat y Netsh Portproxy.md",
-    "Apuntes Hacking/Buffer Overflow/Buffer Overflow en Linux usando GDB y herramientas de Metasploit (sin framework).md",
-    "Apuntes Hacking/Buffer Overflow/Buffer Overflow en Windows con Immunity Debugger + Mona.md",
     "Untitled.base",
     "Apuntes Hacking/Pivoting",
     "Untitled 1.base",
     "Untitled 2.base",
     "Untitled 3.base",
-    "Untitled 4.base",
-    "Apuntes Hacking/Buffer Overflow",
-    "Apuntes Hacking/Active Directory",
-    "Apuntes Hacking/Utilidades",
-    "Apuntes Hacking/Escalada de privilegios"
+    "Untitled 4.base"
   ]
 }
