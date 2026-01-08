@@ -7,7 +7,8 @@ Tags: #cybersecurity #pentesting #bugbounty #web-security #owasp-top10 #xss #cro
 ## 📑 Índice de Navegación
 
  [[#1. Anatomía de la Vulnerabilidad Contexto es Rey]]
-	 
+	[[#Definición]]
+	
  [[#2. Matriz de Inyección por Contexto (Cheat Sheet)]]
     [[#A. Contexto HTML Body (Entre etiquetas)]]
 	[[#B. Contexto Atributos (Dentro de etiquetas)]]
@@ -341,3 +342,4 @@ Para encontrar XSS masivamente.
 # Referencias
 
 - [CheatSheet de PortSwigger](https://portswigger.net/web-security/cross-site-scripting/cheat-sheet)
+- [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings)

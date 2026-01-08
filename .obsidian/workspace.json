@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+                "file": "Apuntes Hacking/Pivoting/Pivoting en Linux-Windows (Chisel, Socat y Netsh Portproxy).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "XSS - Cross-Site Scripting"
+              "title": "Pivoting en Linux-Windows (Chisel, Socat y Netsh Portproxy)"
             }
           }
         ]
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+                "file": "Apuntes Hacking/Pivoting/Pivoting en Linux-Windows (Chisel, Socat y Netsh Portproxy).md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of XSS - Cross-Site Scripting"
+              "title": "Outline of Pivoting en Linux-Windows (Chisel, Socat y Netsh Portproxy)"
             }
           }
         ],
@@ -173,10 +173,13 @@
       "copilot:Open Copilot Chat": false
     }
   },
-  "active": "072ef4ae9c537dae",
+  "active": "1cd6bfb93cdd2df6",
   "lastOpenFiles": [
-    "ls.md",
+    "Apuntes Hacking/Active Directory/Enumeración.md",
+    "Apuntes Hacking/Active Directory/Escalada de privilegios en AD con Certipy y BloodyAD.md",
     "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+    "Apuntes Hacking/Pivoting/Pivoting en Linux-Windows (Chisel, Socat y Netsh Portproxy).md",
+    "ls.md",
     "Apuntes Hacking/Explotación/XSS/DOM-based XSS (Full Stack).md",
     "copilot/copilot-custom-prompts/Rewrite as tweet thread.md",
     "copilot/copilot-custom-prompts/Rewrite as tweet.md",
@@ -202,9 +205,6 @@
     "Apuntes Hacking/Explotación/SQLi/SQLi Basada en Errores Visibles.md",
     "LICENSE",
     "Apuntes Hacking/Explotación/SQLi/Blind SQLi conditional responses based.md",
-    "Apuntes Hacking/Explotación/SQLi/Blind SQLi conditional errors based.md",
-    "Apuntes Hacking/Explotación/SQLi/Blind SQL Injection (Time-Based).md",
-    "Apuntes Hacking/Explotación/SQLi/SQLi Manual.md",
     "Untitled.canvas",
     "Untitled.base",
     "Apuntes Hacking/Pivoting",

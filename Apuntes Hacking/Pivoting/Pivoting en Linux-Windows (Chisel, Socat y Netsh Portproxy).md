@@ -250,4 +250,4 @@ Pensar en pivoting como **topología de red**, no como un solo túnel.
 
 ---
 
-Apuntes orientados a **pentesting real, laboratorios avanzados y escenarios multinivel**, listos para Obsidian.
+Apuntes orientados a **pentesting real, laboratorios avanzados y escenarios multinivel**..
