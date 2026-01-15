@@ -10,7 +10,7 @@ En entornos reales suele implicar:
 - Más de una red interna
     
 - Restricciones de firewall
-    
+       ```
 - Salidas limitadas (solo HTTP/HTTPS)
     
 
