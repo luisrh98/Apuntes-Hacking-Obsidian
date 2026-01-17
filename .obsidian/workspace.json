@@ -34,9 +34,37 @@
               "icon": "lucide-file",
               "title": "XSS - Cross-Site Scripting"
             }
+          },
+          {
+            "id": "6c85dfee6cebfee4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "XSS - Cross-Site Scripting"
+            }
+          },
+          {
+            "id": "541b5f0b3d1b95cd",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Apuntes Hacking/Explotación/CSRF - Cross-Site Request Forgery.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CSRF - Cross-Site Request Forgery"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -128,12 +156,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+                "file": "Apuntes Hacking/Explotación/CSRF - Cross-Site Request Forgery.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": false
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from XSS - Cross-Site Scripting"
+              "title": "Outgoing links from CSRF - Cross-Site Request Forgery"
             }
           },
           {
@@ -188,10 +216,10 @@
       "copilot:Open Copilot Chat": false
     }
   },
-  "active": "d11a2ab8bf0fff79",
+  "active": "541b5f0b3d1b95cd",
   "lastOpenFiles": [
-    "Apuntes Hacking/Pivoting/Pivoting en Linux-Windows (Chisel, Socat y Netsh Portproxy).md",
     "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+    "Apuntes Hacking/Pivoting/Pivoting en Linux-Windows (Chisel, Socat y Netsh Portproxy).md",
     "1. Fundamentos de XSS.md",
     "Modelo Source → Sink → Context.md",
     "Apuntes Hacking/Escalada de privilegios/Abuso de SUID.md",
