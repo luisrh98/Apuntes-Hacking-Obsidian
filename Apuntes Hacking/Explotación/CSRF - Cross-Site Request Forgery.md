@@ -324,47 +324,219 @@ setTimeout(()=>document.forms[0].submit(),5000);
     
 
 ---
-
 ## 11. CSRF con validación Referer
 
+### Concepto: ¿qué es el header Referer?
+
+El encabezado HTTP **Referer** indica la URL desde la cual se originó una petición HTTP. Algunos servidores lo utilizan como mecanismo de protección CSRF comprobando que:
+
+- El Referer exista
+    
+- El dominio del Referer coincida con el dominio de la aplicación
+    
+
+Ejemplo de Referer legítimo:
+
+`Referer: https://victima.net/my-account`
+
+Este enfoque es **débil por diseño**, ya que el Referer:
+
+- Puede ser eliminado por el navegador
+    
+- Puede ser modificado por políticas de privacidad
+    
+- No es obligatorio según el estándar HTTP
+    
+
+---
 ### Caso
 
-Servidor valida Referer
+El servidor **rechaza la petición si el header Referer existe y no coincide** con su dominio.
 
-### Bypass eliminando Referer
+Ejemplo de error:
 
-```html
-<meta name="referrer" content="no-referrer">
-<form action="https://victima.net/my-account/change-email" method="POST">
-  <input type="hidden" name="email" value="b@c.com">
-</form>
-<script>document.forms[0].submit();</script>
+Invalid referer header
+
+Esto ocurre cuando la víctima ejecuta el ataque desde un dominio externo (por ejemplo, el exploit server), y el navegador envía:
+
+Referer: https://exploit-server.net/...
+
+---
+### Bypass eliminando el Referer
+
+Si la lógica del backend es:
+
 ```
+if Referer existe:
+	validar dominio
+else:
+permitir petición
+```
+
+Entonces basta con **forzar al navegador a no enviar el Referer**.
 
 ---
 
+### Técnica: Referrer Policy = no-referrer
+
+HTML permite definir políticas de envío del Referer mediante la directiva **Referrer-Policy**.
+
+<meta name="referrer" content="no-referrer">
+
+Esta política indica al navegador:
+
+- No enviar el header Referer en ninguna petición
+    
+
+---
+
+### PoC completo
+
+```html
+<meta name="referrer" content="no-referrer">
+
+<form action="https://victima.net/my-account/change-email" method="POST">
+	<input type="hidden" name="email" value="b@c.com">
+</form>
+<script>
+	document.forms[0].submit();
+</script>
+```
+
+
+---
+### Por qué funciona
+
+- El navegador **no envía Referer**
+    
+- El backend **no entra en la validación**
+    
+- La cookie de sesión sí se envía
+    
+- La acción se ejecuta correctamente
+    
+
+---
+
+### Conclusión
+
+Eliminar el Referer es un bypass muy común cuando:
+
+- La validación solo se aplica si el header existe
+    
+- No hay token CSRF adicional
+    
+
+---
 ## 12. CSRF con validación Referer débil
 
+### Concepto: validación por coincidencia parcial
+
+Algunas aplicaciones implementan una validación incorrecta del Referer comprobando únicamente que **contenga una cadena concreta**, por ejemplo:
+
+```
+if Referer contiene "victima.net":
+	permitir
+else:
+	bloquear
+```
+
+Este enfoque es inseguro porque:
+
+- No valida el dominio real
+    
+- No comprueba el esquema
+    
+- No analiza el host correctamente
+    
+
+---
 ### Caso
 
-Servidor solo comprueba que el Referer **contenga una cadena**
+El servidor acepta cualquier Referer que **incluya** el dominio esperado, incluso si:
 
-### Política unsafe-url
+- El dominio real es otro
+    
+- El dominio esperado aparece como subcadena
+    
+
+Ejemplo aceptado erróneamente:
+
+`Referer: https://victima.net.exploit-server.net/`
+
+---
+### ¿Qué es Referrer-Policy: unsafe-url?
+
+La política **unsafe-url** indica al navegador:
+
+- Enviar siempre el Referer completo
+    
+- Incluir path y query string
+    
+- Incluso en peticiones cross-site
+    
+
+<meta name="referrer" content="unsafe-url">
+
+Esto permite al atacante **controlar completamente el valor del Referer**.
+
+---
+### Explotación
+
+1. El atacante sirve el payload desde una URL que contiene la cadena esperada:
+    
+https://victima.net.exploit-server.net/csrf.html
+
+2. El navegador envía el Referer completo:
+    
+Referer: https://victima.net.exploit-server.net/csrf.html
+
+3. El backend hace match parcial (`victima.net`)
+    
+4. La validación se considera correcta
+    
+
+---
+### PoC completo
 
 ```html
 <head>
 <meta name="referrer" content="unsafe-url">
 </head>
+
+<form action="https://victima.net/my-account/change-email" method="POST">
+	<input type="hidden" name="email" value="bbb@c.com">
+</form>
+
+<script>
+	document.forms[0].submit();
+</script>
 ```
+---
 
-### Explotación
+### Impacto
 
-- Referer completo se envía
+- Bypass total de la protección CSRF
     
-- Coincide parcialmente
+- Ejecución de acciones autenticadas
     
-- Bypass de validación
+- Muy común en aplicaciones legacy
     
+
+---
+
+### Conclusión
+
+La validación de Referer es **frágil y fácil de romper** si no se:
+
+- Parsean correctamente los dominios
+    
+- Comparan valores exactos
+    
+- Combinan con tokens CSRF robustos
+    
+
+Nunca debe usarse como única defensa.
 
 ---
 
@@ -393,9 +565,10 @@ CSRF no es una vulnerabilidad trivial. La mayoría de bypasses reales ocurren po
 - Subdominios
     
 - Implementaciones parciales
-    
 
+---
 Un pentester debe analizar **toda la superficie**, no solo la presencia de un token.
+
 ---
 # Referencias
 
