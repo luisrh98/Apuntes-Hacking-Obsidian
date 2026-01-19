@@ -1,84 +1,41 @@
 {
   "main": {
-    "id": "ea4c11d195e5f69a",
+    "id": "45b762f928eaeb19",
     "type": "split",
     "children": [
       {
-        "id": "dc5330a956bb594b",
+        "id": "a2ea0e7f804afbd9",
         "type": "tabs",
         "children": [
           {
-            "id": "cb8579ce03cf1ae6",
+            "id": "3647292174288032",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+                "file": "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/🗄️ SQLi/Blind SQL Injection (Time-Based).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "XSS - Cross-Site Scripting"
-            }
-          },
-          {
-            "id": "d11a2ab8bf0fff79",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "XSS - Cross-Site Scripting"
-            }
-          },
-          {
-            "id": "6c85dfee6cebfee4",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "XSS - Cross-Site Scripting"
-            }
-          },
-          {
-            "id": "541b5f0b3d1b95cd",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Apuntes Hacking/Explotación/CSRF - Cross-Site Request Forgery.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "CSRF - Cross-Site Request Forgery"
+              "title": "Blind SQL Injection (Time-Based)"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "14c38e746e9287ab",
+    "id": "2bc24b9ec42d735d",
     "type": "split",
     "children": [
       {
-        "id": "e69851a9cd13f1b4",
+        "id": "550118d6dcdd3875",
         "type": "tabs",
         "children": [
           {
-            "id": "072ef4ae9c537dae",
+            "id": "474e378dbff8dbcc",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -91,12 +48,12 @@
             }
           },
           {
-            "id": "d235dc0582a8ac5f",
+            "id": "d2c740dc087e017a",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-                "query": "suid",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -108,7 +65,7 @@
             }
           },
           {
-            "id": "25fdf4720373a484",
+            "id": "af3dedffd0790792",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -121,23 +78,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 300
   },
   "right": {
-    "id": "1dd116272d524df1",
+    "id": "5a3f3dc57ddf9366",
     "type": "split",
     "children": [
       {
-        "id": "91611832735278b6",
+        "id": "d4aa5482df674316",
         "type": "tabs",
         "children": [
           {
-            "id": "dc835a39323457bc",
+            "id": "baeeb238d4f07301",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+                "file": "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/🗄️ SQLi/Blind SQL Injection (Time-Based).md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -147,25 +104,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for XSS - Cross-Site Scripting"
+              "title": "Backlinks for Blind SQL Injection (Time-Based)"
             }
           },
           {
-            "id": "4be8b3e155eb3924",
+            "id": "a316257be30c591e",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Apuntes Hacking/Explotación/CSRF - Cross-Site Request Forgery.md",
+                "file": "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/🗄️ SQLi/Blind SQL Injection (Time-Based).md",
                 "linksCollapsed": false,
-                "unlinkedCollapsed": false
+                "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from CSRF - Cross-Site Request Forgery"
+              "title": "Outgoing links from Blind SQL Injection (Time-Based)"
             }
           },
           {
-            "id": "9e95d3d5b782b6ac",
+            "id": "93e406de760c5a83",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -180,80 +137,52 @@
             }
           },
           {
-            "id": "4f87f205dd9eea1f",
+            "id": "caa87c51f2a957c5",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "34dc299a66c0d538",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
+                "file": "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/🗄️ SQLi/Blind SQL Injection (Time-Based).md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of XSS - Cross-Site Scripting"
+              "title": "Outline of Blind SQL Injection (Time-Based)"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
-      "bases:Create new base": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "obsidian-git:Open Git source control": false,
-      "markdown-importer:Open format converter": false,
-      "publish:Publish changes...": false,
-      "copilot:Open Copilot Chat": false
+      "bases:Create new base": false
     }
   },
-  "active": "541b5f0b3d1b95cd",
-  "lastOpenFiles": [
-    "Apuntes Hacking/Explotación/XSS/XSS - Cross-Site Scripting.md",
-    "Apuntes Hacking/Pivoting/Pivoting en Linux-Windows (Chisel, Socat y Netsh Portproxy).md",
-    "1. Fundamentos de XSS.md",
-    "Modelo Source → Sink → Context.md",
-    "Apuntes Hacking/Escalada de privilegios/Abuso de SUID.md",
-    "Apuntes Hacking/Active Directory/Enumeración.md",
-    "Apuntes Hacking/Active Directory/Escalada de privilegios en AD con Certipy y BloodyAD.md",
-    "ls.md",
-    "Apuntes Hacking/Explotación/XSS/DOM-based XSS (Full Stack).md",
-    "copilot/copilot-custom-prompts/Rewrite as tweet thread.md",
-    "copilot/copilot-custom-prompts/Rewrite as tweet.md",
-    "copilot/copilot-custom-prompts/Remove URLs.md",
-    "copilot/copilot-custom-prompts/Generate glossary.md",
-    "copilot/copilot-custom-prompts/Generate table of contents.md",
-    "copilot/copilot-custom-prompts/Make longer.md",
-    "copilot/copilot-custom-prompts/Make shorter.md",
-    "copilot/copilot-custom-prompts/Emojify.md",
-    "copilot/copilot-custom-prompts/Explain like I am 5.md",
-    "copilot/copilot-custom-prompts/Simplify.md",
-    "copilot/copilot-custom-prompts/Summarize.md",
-    "copilot/copilot-custom-prompts/Translate to Chinese.md",
-    "copilot/copilot-custom-prompts/Fix grammar and spelling.md",
-    "copilot/copilot-custom-prompts",
-    "copilot",
-    "Apuntes Hacking/Utilidades/Cómo convertir tu reverse shell en una TTY interactiva.md",
-    "1..md",
-    "Apuntes Hacking/Explotación/Ataque de transferencia de zona (AXFR – Full Zone Transfer).md",
-    "Apuntes Hacking/Explotación/SQLi/SQL Injection vía XXE (XML Injection).md",
-    "Apuntes Hacking/Explotación/XSS",
-    "LICENSE",
-    "Untitled.canvas",
-    "Untitled.base",
-    "Apuntes Hacking/Pivoting",
-    "Untitled 1.base",
-    "Untitled 2.base",
-    "Untitled 3.base",
-    "Untitled 4.base"
-  ]
+  "active": "3647292174288032",
+  "lastOpenFiles": []
 }
