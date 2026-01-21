@@ -186,6 +186,66 @@ document.cookie = 'lastViewedProduct=' + window.location + '; SameSite=None; Sec
 
 El Clobbering consiste en inyectar HTML para **sobreescribir** variables globales de JavaScript.
 
+---
+## Pistas para encontrar Clobbering
+
+### 1. **Variables globales implícitas**
+
+- Si declaras variables **sin `let`, `const` o `var`**, se convierten en globales y pueden sobrescribirse.
+    
+- En tu código:
+    
+
+`comment = comments[i]; dateStr = [day, month, year].join('-');`
+
+✅ **Pista clara de clobbering**: ambas variables (`comment` y `dateStr`) **no tienen `let` ni `const`**.  
+Esto puede sobrescribir variables globales existentes con el mismo nombre, especialmente `comment`.
+### 2. **Reutilización de nombres de propiedades globales**
+
+- Acceder a `window.defaultAvatar` está bien si es intencional, pero si alguien inyecta `defaultAvatar` desde otro script, puede “clobber” tu lógica.
+    
+- También, `comment.avatar` y `comment.author` son nombres comunes que podrían chocar si no controlas el objeto `comments`.
+    
+### 3. **Manipulación directa de `innerHTML`**
+
+- Usar `innerHTML` combinado con variables dinámicas puede provocar clobbering o XSS si el sanitizado falla.
+    
+Ejemplos en tu código:
+
+`divImgContainer.innerHTML = avatarImgHTML firstPElement.innerHTML = newInnerHtml`
+
+✅ **Pista de clobbering**: sobreescribes **todo** el contenido del nodo, lo que puede eliminar nodos hijos previamente insertados.
+
+- Esto también podría ser un vector de clobbering de nodos si el mismo nodo es referenciado en otros lugares.
+    
+#### 4. **Reasignación de nodos existentes**
+
+- `firstPElement.appendChild(divImgContainer)` luego de haber hecho `innerHTML = avatarImgHTML` puede sobrescribir nodos si se reutilizan referencias.
+    
+#### 5. **Función `escapeHTML` y `DOMPurify`**
+
+- La función `escapeHTML` está bien definida y local, no clobberea nada.
+    
+- `DOMPurify.sanitize(comment.author)` protege contra XSS, pero cuidado con:
+    
+
+`let newInnerHtml = firstPElement.innerHTML + DOMPurify.sanitize(comment.author) firstPElement.innerHTML = newInnerHtml`
+
+- Esto combina contenido antiguo y nuevo en `innerHTML`, lo que puede **clobberear nodos hijos existentes**, como `websiteElement` insertado antes.
+    
+##### ✅ **Resumen rápido de las pistas de clobbering**
+
+1. **Variables sin `let`/`const`/`var`:** `comment`, `dateStr`.
+    
+2. **Reasignación de `innerHTML` con contenido dinámico**: puede clobberear nodos hijos.
+    
+3. **Reutilización de nombres globales (`window.*`)**: `defaultAvatar`.
+    
+4. **Manipulación de nodos ya referenciados**: `firstPElement.appendChild()` después de cambiar `innerHTML`.
+    
+5. **Propiedades dinámicas de objetos JSON no controladas**: `comment.avatar`, `comment.author`.
+
+---
 ### A. XSS mediante Clobbering de Objetos
 
 **Escenario:** El script usa una variable global de configuración que no ha sido declarada.
