@@ -12,11 +12,8 @@ Tags: #web #cors #cabeceras #headers #robo
 - [[#💥 Métodos de Explotación|3. Vectores de Ataque]]
     
 - [[#🛠 Ejemplos prácticos|4. Laboratorios y Payloads]]
-    
     - [[#1. CORS con Reflexión Básica del Origen|4.1. Reflexión de Origen]]
-        
     - [[#2. CORS con Origen null Confiable|4.2. Origen Null (Iframe Sandbox)]]
-        
     - [[#3. CORS con Protocolos e Integridad de Subdominios Inseguros|4.3. Protocolos e Integridad (XSS + CORS)]]
         
 - [[#Resumen de mitigación (Best Practices)|5. Guía de Mitigación]]

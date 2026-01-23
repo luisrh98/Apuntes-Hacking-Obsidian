@@ -51,12 +51,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/XXE – XML External Entity Injection.md",
+                "file": "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/CORS - Cross-Origin Resource Sharing.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "XXE – XML External Entity Injection"
+              "title": "CORS - Cross-Origin Resource Sharing"
             }
           },
           {
@@ -65,16 +65,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/XXE – XML External Entity Injection.md",
+                "file": "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/SSRF - Server-Side Request Forgery.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "XXE – XML External Entity Injection"
+              "title": "SSRF - Server-Side Request Forgery"
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -106,7 +106,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "xinclu",
+                "query": "shells",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -127,8 +127,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -237,10 +236,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "c9c0b3ef2827b82e",
+  "active": "8053a1bdde4d219a",
   "lastOpenFiles": [
-    "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/CORS - Cross-Origin Resource Sharing.md",
     "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/XXE – XML External Entity Injection.md",
+    "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/SSRF - Server-Side Request Forgery.md",
+    "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/ShellShock.md",
+    "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/CORS - Cross-Origin Resource Sharing.md",
     "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/Vulnerabilidades DOM-Based.md",
     "Apuntes Hacking/🔧 Utilidades/📦 Payloads/Metasploit.md",
     "etiquetado.py",
@@ -264,8 +265,6 @@
     "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/🧠 Lógica/Open Redirect.md",
     "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/🧠 Lógica/Condiciones de Carrera - Race Condition.md",
     "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/🧠 Lógica/Clickjacking.md",
-    "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/📂 LFI - Local File Inclusion/Php_filter_chain_generator.py.md",
-    "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/📂 LFI - Local File Inclusion/LFI - Local File Inclusion.md",
-    "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/XSS - Cross-Site Scripting.md"
+    "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/📂 LFI - Local File Inclusion/Php_filter_chain_generator.py.md"
   ]
 }

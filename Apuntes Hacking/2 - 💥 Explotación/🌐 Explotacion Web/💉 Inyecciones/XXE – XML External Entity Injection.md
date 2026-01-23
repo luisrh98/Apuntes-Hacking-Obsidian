@@ -2,7 +2,7 @@
 Tags: #xml #database #inyección #injection #explotación #Exploitation #blind  #wrappers #xxe 
 
 -----------------
-# 📑📑 Índice de Contenidos
+# 📑 Índice de Contenidos
 
 - [[#Resumen|1. Resumen]]
 	
@@ -34,11 +34,9 @@ Tags: #xml #database #inyección #injection #explotación #Exploitation #blind  
 	
 - [[#Mitigaciones y recomendaciones|8. Mitigaciones]]
 	
-- [[#Organización sugerida para el repositorio de apuntes (Obsidian)|9. Organización en Obsidian]]
+- [[#Conclusión y buenas prácticas|9. Conclusión]]
 	
-- [[#Conclusión y buenas prácticas|10. Conclusión]]
-	
-- [[#Recursos adicionales (breve lista)|11. Recursos]]
+- [[#Recursos adicionales (breve lista)|10. Recursos]]
 
 ---
 
@@ -398,9 +396,7 @@ Usa `requests` para apuntar la DTD SYSTEM a `http://<your-ip>:8000/`.
 
 - Genera un dominio interactivo y monitoriza callbacks para confirmar XXE OOB.
     
-
 ---
-
 ## Mitigaciones y recomendaciones
 
 1. **Deshabilitar resolución de entidades externas** en todos los parsers XML (recomendación primaria). Ejemplos:
@@ -423,43 +419,6 @@ Usa `requests` para apuntar la DTD SYSTEM a `http://<your-ip>:8000/`.
     
 
 ---
-
-## Organización sugerida para el repositorio de apuntes (Obsidian)
-
-Opciones válidas:
-
-- **Carpeta única `XXE/` con archivos por técnica** (recomendado):
-    
-    - `00-XXE-Resumen.md`
-        
-    - `01-XXE-Direct-file-read.md`
-        
-    - `02-XXE-SSRF-metadata.md`
-        
-    - `03-XXE-OOB-dtd-externa.md`
-        
-    - `04-XXE-XInclude.md`
-        
-    - `05-XXE-SVG-upload.md`
-        
-    - `06-XXE-DTD-local-docbook.md`
-        
-    - `99-cheatsheet.md`
-        
-    
-    **Ventajas**: navegación rápida, cada archivo es una unidad de estudio y se pueden incluir snippets, tags, y backlinks en Obsidian.
-    
-- **Un solo archivo largo** `XXE-completo.md` (alternativa):
-    
-    - Ventaja: todo en un documento, fácil búsqueda global.
-        
-    - Inconveniente: difícil de mantener y demasiado largo.
-        
-
-Recomendación: **usar carpeta + archivo resumen**. Mantén PoCs en `scripts/` y payloads en `payloads/` para poder copiarlos rápidamente.
-
----
-
 ## Conclusión y buenas prácticas
 
 - XXE es una vulnerabilidad antigua pero aún frecuente; su prevención es simple (desactivar resolución externa) pero requiere disciplina en parsers y librerías.
@@ -470,7 +429,6 @@ Recomendación: **usar carpeta + archivo resumen**. Mantén PoCs en `scripts/` y
     
 
 ---
-
 ## Recursos adicionales (breve lista)
 
 - OWASP XXE Cheat Sheet
@@ -479,9 +437,7 @@ Recomendación: **usar carpeta + archivo resumen**. Mantén PoCs en `scripts/` y
     
 - PortSwigger labs: XXE / XXE OOB
     
-
 ---
 
-_Notas:_ he incluido todos los payloads que me proporcionaste (además de explicaciones y PoCs). Si quieres que genere los archivos separados (una nota por técnica en la carpeta `XXE/`) los creo ahora.
 
 - Cheat Sheet y material de Portswigger: [Enlace](https://portswigger.net/web-security/xxe#what-is-xml-external-entity-injection)
