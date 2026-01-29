@@ -4,21 +4,16 @@ Tags: #pentesting #web-security #DOM #XSS #clobbering #postMessage #javascript #
 # Índice
 
 - **[[#1. Web Messages (postMessage)|1. Web Messages (postMessage)]]**
-    
     - [[#A. XSS DOM Simple vía postMessage|A. XSS DOM Simple]]
-        
     - [[#B. postMessage y URL JavaScript|B. postMessage y URL JavaScript]]
-        
     - [[#C. postMessage y JSON.parse|C. postMessage y JSON.parse]]
-        
+	        
 - **[[#2. Redirección Abierta (Open Redirect) DOM|2. Redirección Abierta (Open Redirect) DOM]]**
-    
+	
 - **[[#3. Manipulación de Cookies vía DOM|3. Manipulación de Cookies vía DOM]]**
     
 - **[[#4. DOM Clobbering (Avanzado)|4. DOM Clobbering (Avanzado)]]**
-    
     - [[#A. XSS mediante Clobbering de Objetos|A. Clobbering de Objetos]]
-        
     - [[#B. Bypass de Filtros (HTMLJanitor)|B. Bypass de Filtros (HTMLJanitor)]]
         
 - **[[#📝 Resumen|📝 Resumen Final]]**
