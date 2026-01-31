@@ -51,7 +51,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Request Smuggling/CL.TE y TE.CL - HTTP2 Ataques Avanzados.md",
+                "file": "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/CL.TE y TE.CL - HTTP2 Ataques Avanzados.md",
                 "mode": "source",
                 "source": false
               },
@@ -65,12 +65,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Request Smuggling/0.CL, Pause-Based y Client-Side Desync - CSD.md",
+                "file": "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/SSTI - Server-Side Template Injection.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "0.CL, Pause-Based y Client-Side Desync - CSD"
+              "title": "SSTI - Server-Side Template Injection"
             }
           },
           {
@@ -120,7 +120,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "path:\"Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Request Smuggling/\" ",
+                "query": "ssti",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -141,8 +141,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -251,15 +250,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "d2c740dc087e017a",
+  "active": "9ccdc5d8b0705bf6",
   "lastOpenFiles": [
-    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Request Smuggling/CL.TE y TE.CL - HTTP1 Fundamentos y Explotacion.md",
-    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Request Smuggling/0.CL, Pause-Based y Client-Side Desync - CSD.md",
-    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Request Smuggling/CL.TE y TE.CL - HTTP2 Ataques Avanzados.md",
-    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Request Smuggling/Turbo Intruder - Request Smuggling.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/OS Command Injection.md",
+    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/SSTI - Server-Side Template Injection.md",
+    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/0.CL, Pause-Based y Client-Side Desync - CSD.md",
+    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/CL.TE y TE.CL - HTTP1 Fundamentos y Explotacion.md",
+    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/CL.TE y TE.CL - HTTP2 Ataques Avanzados.md",
+    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/Turbo Intruder - Request Smuggling.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/ShellShock.md",
-    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Request Smuggling",
+    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/Insecure Direct Object Reference - IDORs.md",
     "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Request Smuggling.md",
     "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Re.txt",
@@ -281,7 +281,6 @@
     "Apuntes Hacking/Assets/Grafos/Wordpress.md",
     "Apuntes Hacking/Assets/Grafos/Magento.md",
     "Apuntes Hacking/Assets/Grafos/Joomla.md",
-    "Apuntes Hacking/Assets/Grafos/Drupal.md",
     "diff.txt"
   ]
 }
