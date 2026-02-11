@@ -34,6 +34,15 @@ Tags: #headers #cabeceras #host #burpsuite #param-miner #poisoning #cache #xss
 [[#12. Poisoning de Caché Interna]]
 	
 [[#Resumen para tus Apuntes (Tabla de Cabeceras Avanzadas)]]
+	
+[[#Metodología de Auditoría Paso a Paso]]
+	[[#1. Reconocimiento de la Infraestructura de Caché]]
+	[[#2. Detección de "Unkeyed Inputs" (Entradas no indexadas)]]
+	[[#3. Evaluación del Impacto (El Payload)]]
+	[[#4. Ejecución del Envenenamiento]]
+	
+[[#Prevención y Remediación (Para el Reporte)]]
+
 
 ---
 
@@ -464,3 +473,75 @@ Aquí tienes la tabla que me pediste para agrupar las cabeceras explicadas en es
 |`X-Host`|Custom|Alternativa a `X-Forwarded-Host` si este está bloqueado.|
 |`Pragma: x-get-cache-key`|Debug|Revela los componentes de la llave de caché (Akamai).|
 |`Vary`|Respuesta|Indica qué cabecera del cliente segmenta la caché (Targeting).|
+
+---
+
+### Metodología de Auditoría: Paso a Paso
+
+Como experto en seguridad ofensiva, no puedes disparar a ciegas. Sigue este flujo lógico:
+
+#### 1. Reconocimiento de la Infraestructura de Caché
+
+Antes de lanzar payloads, identifica a qué te enfrentas.
+
+- **Cabeceras de Respuesta:** Busca `X-Cache: hit/miss`, `Age`, `Cache-Control`, `CF-Cache-Status` (Cloudflare).
+    
+- **Identificación de la Key:** Envía dos peticiones idénticas. Si la segunda tiene `X-Cache: hit`, ya sabes que esa URL se cachea.
+    
+- **Uso de Debug Headers:** Prueba siempre `Pragma: x-get-cache-key` o `X-Cache-Debug: 1`.
+    
+
+#### 2. Detección de "Unkeyed Inputs" (Entradas no indexadas)
+
+Utiliza **Param Miner**. Es la herramienta estándar.
+
+- **Fuerza Bruta de Cabeceras:** Busca cabeceras como `X-Forwarded-Host`, `X-Host`, `X-Forwarded-Scheme`.
+    
+- **Detección de Cambios:** Si al añadir `X-Forwarded-Host: test.com` la respuesta cambia (ej. un link cambia a `test.com`) pero la cabecera `X-Cache` sigue dando `HIT`, has encontrado un **Unkeyed Input**.
+    
+
+#### 3. Evaluación del Impacto (El Payload)
+
+Una vez que controlas un input que se refleja en una respuesta cacheada:
+
+- **Reflexión en HTML:** Intenta inyectar etiquetas (`<script>`, `<img>`).
+    
+- **Reflexión en JS:** Si el input cae dentro de un script, intenta romper el contexto (`'; alert(1)//`).
+    
+- **Redirecciones:** Si controlas el Host, intenta redirigir a un servidor externo donde controles el contenido.
+    
+
+#### 4. Ejecución del Envenenamiento
+
+- **Limpieza de Caché:** Si puedes, usa un "Cache Buster" (`?cb=123`) para trabajar sobre una copia fresca sin molestar a otros usuarios durante las pruebas.
+    
+- **Timing:** Asegúrate de enviar tu petición maliciosa justo cuando el `Age` de la caché sea cercano al `max-age` (cuando la caché va a expirar).
+    
+
+---
+
+### Checklist de Verificación Rápida
+
+|**Fase**|**Acción**|**¿Qué buscar?**|
+|---|---|---|
+|**Identificación**|¿Hay caché?|Cabeceras `X-Cache`, `Server: Varnish`, `Via`.|
+|**Búsqueda**|¿Hay inputs ocultos?|Usa Param Miner (Headers, Cookies, Params).|
+|**Análisis**|¿Se refleja el input?|Busca tu payload en el código fuente de la respuesta.|
+|**Confirmación**|¿Es "Unkeyed"?|Cambia el input; si la caché da `HIT` con el valor viejo, es vulnerable.|
+|**Explotación**|¿Hay XSS o Redirect?|Intenta ejecutar JS o redirigir recursos estáticos (.js, .css).|
+
+---
+
+### Prevención y Remediación (Para el Reporte)
+
+Si encuentras esto en una auditoría real, estas son las recomendaciones que debes dar:
+
+1. **Regla de Oro:** Nunca confíes en los datos de las cabeceras `X-Forwarded-*` para generar contenido dinámico en la página.
+    
+2. **Indexación Estricta:** Si una cabecera o parámetro afecta a la respuesta, **debe** formar parte de la _Cache Key_.
+    
+3. **Deshabilitar Cabeceras No Usadas:** Si el servidor no necesita `X-Forwarded-Host`, bloquéalo a nivel de WAF o Proxy.
+    
+4. **Uso de Vary:** Configura correctamente la cabecera `Vary` para separar cachés por `User-Agent` o `Cookie` si es estrictamente necesario, aunque esto reduce la eficiencia de la caché.
+    
+5. **Caché de Errores:** Evita cachear respuestas con estados de error (404, 500) donde se reflejen inputs del usuario.
