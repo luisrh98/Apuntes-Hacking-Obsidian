@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Hacking Notes/1 - 🔍 Reconocimiento y Enumeración/🛡️ Reconocimiento y Divulgación de Información.md",
+                "file": "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/Vulnerabilidades de Lógica de Negocio.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "🛡️ Reconocimiento y Divulgación de Información"
+              "title": "Vulnerabilidades de Lógica de Negocio"
             }
           }
         ],
@@ -68,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#cybersecurity",
+                "query": "tag:#Checklist",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -201,8 +201,9 @@
   },
   "active": "d2c740dc087e017a",
   "lastOpenFiles": [
-    "Hacking Notes/🔧 Utilidades/Herramientas.md",
     "Hacking Notes/1 - 🔍 Reconocimiento y Enumeración/🛡️ Reconocimiento y Divulgación de Información.md",
+    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/Vulnerabilidades de Lógica de Negocio.md",
+    "Hacking Notes/🔧 Utilidades/Herramientas.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🧬 Deserialización/Python – Ataque de Deserialización Pickle - DES-Pickle.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🧬 Deserialización/Deserialización Insegura.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/Web Cache Poisoning - Con ejemplos de laboratorios de Portswigger.md",
@@ -229,7 +230,6 @@
     "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/CSRF - Cross-Site Request Forgery.md",
     "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/🧠 Lógica/Clickjacking.md",
     "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/CORS - Cross-Origin Resource Sharing.md",
-    "Apuntes Hacking/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/XXE – XML External Entity Injection.md",
     "etiquetado.py",
     "diff.txt"
   ]
