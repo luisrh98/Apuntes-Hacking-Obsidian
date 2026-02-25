@@ -25,9 +25,9 @@ Tags: #JWT #JSONWebToken #Autenticación #Tokens #Criptografía #BypassFirma #Al
     
 - [[#9. Confusión de algoritmo JWT sin clave expuesta (sig2n)]]
 	
-- [[#<span style="color 2D882D;">10. Tablas Resumen y Cheatsheets</span>||10. Tablas Resumen y Cheatsheets]]
-	- [[#<span style="color 28578E;">Clasificación de Algoritmos Comunes</span>||Clasificación de Algoritmos Comunes]]
-	- [[#<span style="color 28578E;">Matriz de Técnicas Ofensivas JWT</span>||Matriz de Técnicas Ofensivas JWT]]
+- [[#10. Tablas Resumen y Cheatsheets]]
+	- [[#Clasificación de Algoritmos Comunes]]
+	- [[#Matriz de Técnicas Ofensivas JWT]]
 	
 ---
 
@@ -184,7 +184,7 @@ Consiste en generar tu propio par de claves RSA. Pones la clave pública generad
 
 ---
 
-## <span style="color:#2D882D;">6. Bypass de autenticación JWT por inyección en jku</span>
+## 6. Bypass de autenticación JWT por inyección en jku
 
 **Definición:** El parámetro de cabecera `jku` (JWK Set URL) proporciona una URL desde la cual el servidor puede descargar un conjunto de claves (JWK Set) para verificar la firma del token. Si el backend no valida (o lista blanca) correctamente las URLs permitidas, estamos ante una vulnerabilidad similar a un SSRF (_Server-Side Request Forgery_), que nos permite obligar al servidor a usar nuestra propia clave pública.
 
@@ -228,7 +228,7 @@ Cambiamos el usuario en el _Payload_ a la víctima, firmamos con nuestra clave p
 
 ---
 
-## <span style="color:#2D882D;">7. Bypass de autenticación JWT con traversal en kid</span>
+## 7. Bypass de autenticación JWT con traversal en kid
 
 **Definición:** El parámetro `kid` (Key ID) indica qué clave se usó para firmar. A veces, el backend utiliza el valor de `kid` para buscar el archivo de la clave directamente en el sistema de archivos local del servidor. Si no sanitiza este input, podemos usar _Directory Traversal_ (`../`) para apuntar a un archivo con contenido predecible, como `/dev/null` en sistemas Linux (el cual está vacío).
 
@@ -254,7 +254,7 @@ Cambiamos el usuario en el _Payload_, firmamos el token usando nuestra clave nul
 
 ---
 
-## <span style="color:#2D882D;">8. Bypass de autenticación JWT por confusión de algoritmo</span>
+## 8. Bypass de autenticación JWT por confusión de algoritmo
 
 **Definición:** Ocurre cuando el servidor espera un token firmado con un algoritmo asimétrico (ej. RS256, que requiere clave privada para firmar y pública para verificar) pero **no verifica que el algoritmo recibido sea el esperado**. Si el servidor expone su clave pública, el atacante puede descargarla, cambiar la cabecera del token a un algoritmo simétrico (`HS256`) y firmar el token usando **la clave pública como si fuera la clave secreta simétrica**. El backend, confundido, verificará el token simétricamente usando su propia clave pública, dándolo por válido.
 
@@ -292,8 +292,7 @@ Firmamos en la pestaña _JSON Web Token_ usando la clave simétrica que acabamos
 
 ---
 
-## <span style="color:#2D882D;">9. Confusión de algoritmo JWT sin clave expuesta (sig2n)</span>
-
+## 9. Confusión de algoritmo JWT sin clave expuesta (sig2n)
 **Definición:** Esta es la misma vulnerabilidad de Confusión de Algoritmo, pero en un escenario _Blind_ (Ciego). El servidor **no expone** la clave pública. Sin embargo, matemáticamente es posible deducir la clave pública analizando dos o más firmas RSA válidas emitidas por el servidor.
 
 **Uso de la Herramienta (sig2n):** `sig2n` es un script (a menudo usado vía Docker) que toma múltiples tokens firmados por el servidor. Al comparar las firmas, puede derivar un conjunto reducido de posibles claves públicas. Una de ellas será la correcta.
@@ -317,11 +316,11 @@ La herramienta escupirá posibles claves públicas (y tokens manipulados de prue
 
 ---
 
-## <span style="color:#2D882D;">10. Tablas Resumen y Cheatsheets</span>
+## 10. Tablas Resumen y Cheatsheets
 
 Para completar tus apuntes de Obsidian y tener todo a mano de un vistazo, he creado estas tablas resumen para ti.
 
-### <span style="color:#28578E;">Clasificación de Algoritmos Comunes</span>
+### Clasificación de Algoritmos Comunes
 
 |Familia Algoritmo|Tipo|Descripción|Vulnerabilidad común si se configura mal|
 |---|---|---|---|
@@ -330,7 +329,7 @@ Para completar tus apuntes de Obsidian y tener todo a mano de un vistazo, he cre
 |**ES256, ES384, ES512**|Asimétrico (ECDSA)|Basado en curvas elípticas. Más rápidos y cortos que RSA.|Fallos en implementación matemática, inyección de claves.|
 |**none**|Ninguno|No requiere firma.|Bypass directo de autenticación si el servidor no lo bloquea.|
 
-### <span style="color:#28578E;">Matriz de Técnicas Ofensivas JWT</span>
+### Matriz de Técnicas Ofensivas JWT
 
 |Técnica de Ataque|Vector Principal|¿Qué manipular?|Herramienta recomendada|
 |---|---|---|---|

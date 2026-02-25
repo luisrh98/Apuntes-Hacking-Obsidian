@@ -1,0 +1,19 @@
+/* Configuración de colores para jerarquía de Hacking */
+
+/* H1 - Título Principal (Vulnerabilidad) */
+.markdown-rendered h1, .cm-header-1 { 
+    color: #27ae60 !important; 
+    border-bottom: 1px solid #27ae6033; /* Añade una línea sutil debajo */
+    padding-bottom: 5px;
+}
+
+/* H2 - Secciones (Metodología) */
+.markdown-rendered h2, .cm-header-2 { 
+    color: #16a085 !important; 
+}
+
+/* H3 - Detalles (Payloads y Comandos) */
+.markdown-rendered h3, .cm-header-3 { 
+    color: #2ecc71 !important; 
+    font-style: italic; /* Un toque de distinción para subsecciones */
+}
