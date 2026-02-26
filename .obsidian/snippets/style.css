@@ -1,25 +1,175 @@
-/* Configuración de colores para jerarquía de Hacking */
+/* =======================================================
+   HACKING / PENTESTING PROFESSIONAL STYLE - OBSIDIAN
+   ======================================================= */
 
-/* H1 - Título Principal (Vulnerabilidad) */
-.markdown-rendered h1, .cm-header-1 { 
-    color: #27ae60 !important; 
-    border-bottom: 1px solid #27ae6033; /* Añade una línea sutil debajo */
-    padding-bottom: 5px;
+/* ===============================
+   1️⃣ HEADERS – JERARQUÍA VISUAL
+   =============================== */
+
+/* H1 - Vulnerabilidad principal */
+.markdown-rendered h1, .cm-header-1 {
+    color: #27ae60 !important;
+    border-bottom: 2px solid #27ae6050;
+    padding-bottom: 6px;
+    margin-top: 1.8em;
+    letter-spacing: 1px;
 }
 
-/* H2 - Secciones (Metodología) */
-.markdown-rendered h2, .cm-header-2 { 
-    color: #16a085 !important; 
+/* H2 - Metodología */
+.markdown-rendered h2, .cm-header-2 {
+    color: #16a085 !important;
+    margin-top: 1.5em;
 }
 
-/* H3 - Detalles (Payloads y Comandos) */
-.markdown-rendered h3, .cm-header-3 { 
-    color: #2ecc71 !important; 
-    font-style: italic; /* Un toque de distinción para subsecciones */
+/* H3 - Payloads / Técnicas */
+.markdown-rendered h3, .cm-header-3 {
+    color: #2ecc71 !important;
+    font-style: italic;
 }
 
-/* Forzar que los diagramas de Mermaid no excedan el ancho de la nota */
+/* H4 - Detalle fino */
+.markdown-rendered h4, .cm-header-4 {
+    color: #1abc9c !important;
+    opacity: 0.9;
+}
+
+/* ===============================
+   2️⃣ BLOQUES DE CÓDIGO
+   =============================== */
+
+.markdown-rendered pre {
+    background-color: #111827 !important;
+    border: 1px solid #1f2937;
+    border-left: 4px solid #27ae60;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+/* Código inline */
+.markdown-rendered code {
+    background-color: #1f2937;
+    color: #2ecc71;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+/* ===============================
+   3️⃣ TABLAS TÉCNICAS
+   =============================== */
+
+.markdown-rendered table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+    font-size: 0.95em;
+}
+
+.markdown-rendered th {
+    background-color: #1f2937;
+    color: #2ecc71;
+    border: 1px solid #2d3748;
+    padding: 8px;
+    text-align: left;
+}
+
+.markdown-rendered td {
+    border: 1px solid #2d3748;
+    padding: 8px;
+}
+
+.markdown-rendered tr:nth-child(even) {
+    background-color: #111827;
+}
+
+/* ===============================
+   4️⃣ CALLOUTS PERSONALIZADOS
+   =============================== */
+
+/* INFO */
+.callout[data-callout="info"] {
+    border-left: 4px solid #3498db;
+    background-color: #0f172a;
+}
+
+/* WARNING */
+.callout[data-callout="warning"] {
+    border-left: 4px solid #f39c12;
+    background-color: #1a1205;
+}
+
+/* EXPLOIT */
+.callout[data-callout="exploit"] {
+    border-left: 4px solid #e74c3c;
+    background-color: #190909;
+}
+
+/* DEFENSE */
+.callout[data-callout="defense"] {
+    border-left: 4px solid #2ecc71;
+    background-color: #071a12;
+}
+
+/* ===============================
+   5️⃣ LISTAS MÁS VISUALES
+   =============================== */
+
+.markdown-rendered ul li::marker {
+    color: #2ecc71;
+}
+
+.markdown-rendered ol li::marker {
+    color: #16a085;
+}
+
+/* ===============================
+   6️⃣ LINKS INTERNOS
+   =============================== */
+
+.internal-link {
+    color: #1abc9c !important;
+    font-weight: 500;
+}
+
+.internal-link:hover {
+    color: #2ecc71 !important;
+}
+
+/* ===============================
+   7️⃣ BLOQUES DE CITA (Notas técnicas)
+   =============================== */
+
+.markdown-rendered blockquote {
+    border-left: 4px solid #16a085;
+    background-color: #0f172a;
+    padding: 8px 12px;
+    opacity: 0.95;
+}
+
+/* ===============================
+   8️⃣ MERMAID RESPONSIVE
+   =============================== */
+
 .mermaid {
     max-width: 100%;
     overflow-x: auto;
+}
+
+/* ===============================
+   9️⃣ SEPARADORES MÁS VISIBLES
+   =============================== */
+
+.markdown-rendered hr {
+    border: none;
+    border-top: 1px solid #2d3748;
+    margin: 2em 0;
+}
+
+/* ===============================
+   🔟 EFECTO SUTIL EN HOVER TABLAS
+   =============================== */
+
+.markdown-rendered tr:hover {
+    background-color: #1a2233;
+    transition: background-color 0.2s ease-in-out;
 }
