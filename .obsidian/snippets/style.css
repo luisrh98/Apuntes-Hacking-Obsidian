@@ -17,3 +17,9 @@
     color: #2ecc71 !important; 
     font-style: italic; /* Un toque de distinción para subsecciones */
 }
+
+/* Forzar que los diagramas de Mermaid no excedan el ancho de la nota */
+.mermaid {
+    max-width: 100%;
+    overflow-x: auto;
+}
