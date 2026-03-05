@@ -30,14 +30,15 @@ Tags: #CLTE #TECL #smuggling #http #http2 #request #poisoning
 POST / HTTP/2
 Host: 0a8e0075032c81f1802903c400f000c4.web-security-academy.net
 Transfer-Encoding: chunked
-Content-Length: 89
 
 0
 
 GET /x HTTP/1.1
 Host: 0a8e0075032c81f1802903c400f000c4.web-security-academy.net
+
 ```
 
+>!Importante los saltos de linea: `\r\n`
 #### Explicación Técnica:
 
 1. **Front-end (HTTP/2):** Ve una petición H2. En H2, la longitud del cuerpo está definida por el "frame" de datos, no por cabeceras. El Front-end lee todo el bloque (incluido el `GET /x...`) como el cuerpo de la petición.
@@ -164,42 +165,87 @@ Value: value\r\n\r\nGET /error HTTP/1.1\r\nHost: ...
     
 
 ---
-### 5. Bypass de control con túnel HTTP/2 (Request Tunnelling)
+### 5. Bypass de control con túnel HTTP/2 (Request Tunnelling via CRLF)
 
-Este es uno de los ataques más elegantes. Usamos el `CRLF Injection` para "tunelar" una petición completa dentro de otra, pero con un objetivo específico: **Saltarse los filtros del Front-end**.
+**El Concepto:** El "Request Tunnelling" ocurre cuando logramos encapsular (tunelar) una petición HTTP completa y maliciosa _dentro_ de una cabecera de una petición HTTP/2 aparentemente inofensiva. Su objetivo principal es evadir las restricciones de enrutamiento del Front-end (como reglas de firewall o bloqueos de rutas como `/admin`) y comunicarse directamente con el Back-end asumiendo roles privilegiados.
 
-**El Escenario:** El Front-end bloquea `/admin`. Pero el Front-end confía en el Back-end y le pasa cabeceras secretas como `X-SSL-VERIFIED: 1` o `X-FRONTEND-KEY`.
+#### Fase 1: Fuga de Información (Leak de Cabeceras Internas)
 
-**Tu Payload (Inyectado en un header H2):**
+Antes de tunelar, necesitamos saber cómo el Front-end se autentica con el Back-end. Los Front-ends suelen añadir cabeceras ocultas (como tokens o estados SSL) al tráfico legítimo. Para descubrirlas, forzamos al Back-end a reflejar nuestra petición. Si enviamos una petición contrabandeada hacia una función de búsqueda (ej: `/?search=x`), el Back-end reflejará las cabeceras secretas que el Front-end añadió en el cuerpo de la respuesta.
 
-```HTTP
-Test: testing\r\n
+**Ejemplo de Payload para el Leak (en Burp Inspector):**
+
+- **Método:** `POST`
+    
+- **Name:** 
+
+```http
+foo: bar\r\n
+Content-Length: 500\r\n
 \r\n
-GET /admin/delete?username=carlos HTTP/1.1\r\n
-Host: ...\r\n
-X-SSL-VERIFIED: 1\r\n
-X-FRONTEND-KEY: 0897...
+search=x
 ```
 
-**Por qué funciona (Explicación detallada):**
-
-1. **El Front-end:** Ve una sola petición H2 a una ruta permitida (ej: `/`). Ve una cabecera `Test` con un valor raro (lleno de saltos de línea), pero como es H2, lo deja pasar.
-    
-2. **El Downgrade:** El Front-end escribe esos bytes al Back-end.
-    
-3. **El Back-end:**
-    
-    - Lee la cabecera `Test: testing`.
-        
-    - Ve `\r\n\r\n`. Fin de la primera petición.
-        
-    - Inmediatamente ve `GET /admin...`. **Esta es una nueva petición para el Back-end.**
-        
-4. **El Bypass:** Como esta petición `/admin` "apareció" mágicamente dentro del tráfico que ya pasó el Front-end, **se salta las reglas de bloqueo del Front-end** (que solo revisó la petición contenedora).
-    
-5. **Privilegios:** Además, como tú escribiste la petición entera, puedes inyectar las cabeceras `X-SSL-VERIFIED` y `X-FRONTEND-KEY` que descubriste previamente (con la técnica de reflejar cabeceras que vimos antes), haciendo creer al Back-end que eres el admin legítimo.
+- **Value:** `xyz`
     
 
+_Resultado:_ El servidor devuelve un 200 OK y en el HTML refleja cabeceras como: `X-SSL-VERIFIED: 0`, `X-SSL-CLIENT-CN: null`, y `X-FRONTEND-KEY: 2419397447341318`.
+
+#### Fase 2: Construcción del Túnel (El Payload)
+
+Una vez tenemos las cabeceras secretas, construimos el túnel. Usamos el Inspector de Burp (asegurando que el protocolo es **HTTP/2**) para inyectar saltos de línea (`\r\n` usando `Shift+Enter`) en el **nombre** de una cabecera arbitraria.
+
+**Ejemplo de Payload del Túnel (en Burp Inspector):**
+
+- **Pseudo-cabeceras:** `:method` a `HEAD` (Vital para evitar que el cuerpo de la respuesta externa interfiera).
+    
+- **Name:**
+
+   ```
+   foo: bar\r\n
+   \r\n
+   GET /admin HTTP/1.1\r\n
+   X-SSL-VERIFIED: 1\r\n
+   X-SSL-CLIENT-CN: administrator\r\n
+   X-FRONTEND-KEY: 2419397447341318\r\n
+   \r\n
+   ```
+   
+- **Value:** `xyz`
+    
+
+#### Fase 3: El problema del "Buffer" (Error de Bytes)
+
+**El Error:** Al lanzar el payload anterior, el servidor devuelve: `Server Error: Received only 4454 of expected 9457 bytes of data`. **Explicación Técnica:** El Front-end lee la respuesta del Back-end basándose en el `Content-Length` del recurso externo que pedimos. Si nuestra petición externa pide la raíz (`/`), el Front-end espera una respuesta de, digamos, 4000 bytes. Pero nuestro túnel interno pidió `/admin`, que pesa 9000 bytes. El Front-end corta la conexión prematuramente porque la respuesta es más grande de lo esperado, rompiendo el túnel.
+
+**La Solución (Ajuste de Path):** Debemos pedir en la petición externa un recurso cuya respuesta legítima sea **más corta** que el recurso tunelado.
+
+- Cambiamos el pseudo-header `:path` de `/` a `/login`.
+    
+- Al reenviar la petición, el túnel se mantiene estable y el HTML del panel `/admin` aparece anidado dentro del cuerpo de la respuesta de `/login`.
+    
+
+#### Fase 4: Ejecución (Kill Chain)
+
+Al leer el HTML filtrado de `/admin`, descubrimos el endpoint de borrado de usuarios. Modificamos la petición interna del túnel para ejecutar la acción destructiva con privilegios escalados.
+
+**Payload Final (Kill Chain):**
+
+- **Name:**
+    
+    Plaintext
+    
+    ```
+    foo: bar\r\n
+    \r\n
+    GET /admin/delete?username=carlos HTTP/1.1\r\n
+    X-SSL-VERIFIED: 1\r\n
+    X-SSL-CLIENT-CN: administrator\r\n
+    X-FRONTEND-KEY: 2419397447341318\r\n
+    \r\n
+    ```
+    
+- **Resultado:** El usuario "carlos" es eliminado, evadiendo completamente las defensas perimetrales del Front-end.
 ---
 ### 6. Poisoning de caché con túnel HTTP/2
 

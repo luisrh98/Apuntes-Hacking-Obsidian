@@ -418,23 +418,77 @@ Este ataque ocurre cuando la aplicación refleja cabeceras en la respuesta que, 
 
 **Análisis de tus PoCs (El uso de `$$` y `Pragma`):**
 
-1. **`Pragma: x-get-cache-key`:**
+- Petición 1: El "Envenenamiento" (Crafting la llave)
+
+```HTTP
+GET /js/localize.js?lang=en?utm_content=x&cors=1 HTTP/2
+Host: 0ab3...
+Pragma: x-get-cache-key
+Origin: x%0d%0aContent-Length:%208%0d%0a%0d%0aalert(1)$$$$
+```
+
+- **¿Por qué usas `Origin` aquí?** En este escenario, el servidor está configurado para que la cabecera `Origin` sea **parte de la clave de caché (Keyed)**. El servidor dice: "Si el Origin cambia, la respuesta puede cambiar, así que inclúyelo en la llave".
     
-    - Esta cabecera (típica de Akamai) le pide al servidor que te devuelva en la respuesta _qué elementos están formando la clave de caché_. Es vital para entender qué estás atacando.
-        
-2. **Separadores `$$`:**
+- **La Inyección:** Al meter `%0d%0a` (saltos de línea CRLF) dentro del `Origin`, estás haciendo un **Header Injection en la propia base de datos de la caché**. Estás forzando a la caché a escribir una llave que, al final, contiene el cuerpo `alert(1)`. Los `$$$$` sirven para "cerrar" o "romper" la estructura que el servidor espera, asegurando que tu carga útil se quede grabada.
+
+
+Deteccion de origin:
+
+##### 1. El método de la "Variación de Caché" (Manual)
+
+Es la prueba de fuego. Si una cabecera es **Keyed**, al cambiar su valor, la caché debería tratar la petición como un objeto totalmente nuevo.
+
+1. Envías tu petición original con `Origin: ejemplo.com`. Recibes un `X-Cache: miss`.
     
-    - Indican que estás intentando inyectar delimitadores internos de la caché. Si la caché construye su clave interna como `URL$$HEADER$$COOKIE`, y tú envías una URL que contiene `$$`, puedes romper la estructura y hacer que la caché confunda partes de la URL con cabeceras.
-        
-3. **El ataque (Explicación simplificada):**
+2. La envías de nuevo. Recibes un `X-Cache: hit`. (Ya está en caché).
     
-    - Intentas inyectar parámetros (`origin`, `content-length`) dentro de la estructura interna de la caché.
+3. **La prueba:** Cambias el Origin a `Origin: atacante.com`.
+    
+    - **Si recibes un `X-Cache: miss`**: ¡BINGO! El servidor de caché ha visto que el Origin es distinto y ha decidido que no puede usar la versión guardada. Esto confirma que el `Origin` **forma parte de la llave**.
         
-    - Si logras inyectar `Content-Length`, puedes causar un **Cache Poisoning DoS** (haciendo que la caché crea que el contenido es más corto de lo que es) o desincronizar respuestas futuras.
-        
-    - En tu ejemplo, estás forzando un redireccionamiento (`/login`) con parámetros contaminados que la caché, por error de parsing interno debido a los `$$`, almacena incorrectamente.
+    - Si recibes un `X-Cache: hit`: El Origin es **unkeyed** (la caché lo ignora).
         
 
+##### 2. Uso de la cabecera `Vary`
+
+A veces el servidor te da una pista legal en la respuesta. Si en los headers de respuesta ves esto: `Vary: Origin, User-Agent`
+
+Eso es el servidor diciéndole a la caché: _"Oye, el contenido de este JS puede cambiar dependiendo de quién sea el Origin, así que crea una copia distinta para cada uno"_. Cualquier cabecera que aparezca en `Vary` es, por definición, parte de la **Cache Key**.
+
+##### 3. Inferencia mediante el parámetro `cors=1`
+
+Aquí es donde entra tu conocimiento de **Full Stack Developer (DAW)**. ¿Por qué alguien pondría un parámetro `cors=1` en un archivo JS?
+
+- **Lógica:** Si `cors=1`, el servidor probablemente espera una cabecera `Origin` para devolver las cabeceras `Access-Control-Allow-Origin`.
+    
+- **Pentester mindset:** Si el backend cambia su respuesta basándose en el `Origin` (para permitir CORS), la caché **está obligada** a incluir el `Origin` en la llave para no servirle a un usuario A la cabecera de CORS del usuario B.
+    
+
+Si ves parámetros como `cors`, `secure`, o `v=...`, sospecha inmediatamente de las cabeceras relacionadas (`Origin`, `X-Forwarded-Proto`, etc.).
+
+- Petición 2: El "Check" (Verificando el veneno)
+
+```HTTP
+GET /js/localize.js?lang=en?utm_content=x&cors=1$$origin=x%0d%0aContent-Length:%208%0d%0a%0d%0aalert(1)$$ HTTP/2
+Host: 0ab3...
+Pragma: x-get-cache-key
+```
+
+- **¿Qué hace `Pragma: x-get-cache-key`?** Es tu "rayos X". Sin esta cabecera, el servidor solo te daría el JS. Con ella, el servidor te confiesa: _"Mira, este archivo lo tengo guardado bajo la llave: `/js/localize.js...$$origin=...`"_.
+    
+- **¿Para qué sirve esta petición?** La usas para confirmar que la caché ha mordido el anzuelo. Estás pidiendo el recurso usando la **llave exacta que acabas de inventar**. Si el servidor te responde con un `X-Cache: hit` y ves tu `alert(1)` en el cuerpo, el veneno ya está en la estantería de la caché, listo para ser servido.
+    
+
+- Petición 3: El "Trigger" (Cazando a la víctima)
+
+```HTTP
+GET /login?lang=en?utm_content=x%26cors=1$$origin=x%250d%250aContent-Length:%25208%250d%250a%250d%250aalert(1)$$%23 HTTP/2
+Host: 0ab3...
+```
+
+- **¿Por qué `/login` sin la barra final?** Esto es brillante. Al pedir `/login`, el servidor responde con un **301/302 Redirect** hacia `/login/`. En ese proceso de redirección, el servidor suele "limpiar" o normalizar la URL, pero a menudo **mantiene los parámetros** que enviaste.
+    
+- **El papel de `utm_content`:** Como este parámetro es **unkeyed** (la caché lo ignora para la llave, pero el backend lo lee), lo usas como un "caballo de Troya". La víctima entra en una URL que parece inofensiva, pero debido a cómo el servidor gestiona los `$$` y los parámetros unkeyed, el navegador de la víctima acaba pidiendo el recurso que coincide exactamente con la **llave envenenada** que creaste en el paso 1.
 ---
 
 ### 12. Poisoning de Caché Interna

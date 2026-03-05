@@ -3,9 +3,7 @@
 Tags: #APISecurity #APIExploitation #MassAssignment #ParameterPollution #HPP #PathTraversal #BrokenAccessControl #DocumentationExposure #Swagger #OpenAPI #BurpSuite
 
 ---
-
 # Índice
-
 
 - [[#1. Exposición y Explotación de Documentación API]]
 	
