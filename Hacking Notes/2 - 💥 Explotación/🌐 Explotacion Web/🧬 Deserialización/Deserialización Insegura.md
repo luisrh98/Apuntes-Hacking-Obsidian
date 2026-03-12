@@ -301,6 +301,12 @@ Ruby utiliza la librería `Marshal` para serializar. Los payloads aquí suelen b
 
 **Análisis del Script (Tu ejemplo `ruby2x_3x.rb`):**
 
+```bash
+ruby -r yaml -r base64 -r net/protocol -r rubygems -r rubygems/package -e 'puts Base64.strict_encode64(Marshal.dump(YAML.unsafe_load(File.read("ruby2x_3x.rb"))))'
+```
+
+Se usa este comando bajo el script en ruby de PayloadsAlltheThings `ruby2x_3x.rb`
+
 Este script no es magia, es una construcción cuidadosa de objetos:
 
 1. **Gadget Chain:**

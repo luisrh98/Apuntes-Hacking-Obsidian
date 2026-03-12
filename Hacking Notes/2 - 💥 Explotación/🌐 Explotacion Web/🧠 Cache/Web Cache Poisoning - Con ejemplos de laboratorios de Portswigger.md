@@ -63,14 +63,14 @@ El **Web Cache Poisoning** ocurre cuando un atacante envía una petición con un
 
 En tus apuntes has utilizado varias cabeceras críticas. Aquí tienes una referencia técnica de su función en la explotación:
 
-|**Cabecera / Parámetro**|**Función Legítima**|**Uso en Explotación (Offensive)**|
-|---|---|---|
-|**`X-Forwarded-Host`**|Indica el host original solicitado por el cliente cuando pasa por un proxy inverso.|**Sobrescribir el host:** Obliga al backend a generar enlaces o scripts apuntando a tu servidor malicioso en lugar del legítimo.|
-|**`X-Forwarded-Scheme`**|Indica el protocolo original (http/https).|**Forzar redirecciones:** Al cambiarlo a `http` en un sitio `https`, el servidor puede intentar redirigir (301/302), permitiendo capturar esa redirección en caché.|
-|**`X-Host`**|Cabecera personalizada o de depuración (no estándar).|**Inyección oculta:** A menudo usada por frameworks internos para definir el host base. Ideal si `X-Forwarded-Host` está bloqueado.|
-|**`Vary`**|Instruye a la caché sobre qué cabeceras hacen que la respuesta varíe (ej. `User-Agent`).|**Targeting:** Si la caché varía por `User-Agent`, debes envenenar la caché específica para el navegador de la víctima, no la global.|
-|**`X-Original-Url`**|Usada por frameworks (como Symfony o ASP.NET) para sobreescribir la ruta solicitada.|**Bypass de Cache Key:** Permite acceder a una ruta distinta a la que ve la caché, confundiendo al mecanismo de almacenamiento.|
-|**`Pragma: x-get-cache-key`**|Cabecera de depuración (común en Akamai).|**Reconocimiento:** Permite ver en la respuesta qué elementos forman exactamente la "Cache Key". Vital para ataques complejos.|
+| **Cabecera / Parámetro**      | **Función Legítima**                                                                     | **Uso en Explotación (Offensive)**                                                                                                                                  |
+| ----------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`X-Forwarded-Host`**        | Indica el host original solicitado por el cliente cuando pasa por un proxy inverso.      | **Sobrescribir el host:** Obliga al backend a generar enlaces o scripts apuntando a tu servidor malicioso en lugar del legítimo.                                    |
+| **`X-Forwarded-Scheme`**      | Indica el protocolo original (http/https).                                               | **Forzar redirecciones:** Al cambiarlo a `http` en un sitio `https`, el servidor puede intentar redirigir (301/302), permitiendo capturar esa redirección en caché. |
+| **`X-Host`**                  | Cabecera personalizada o de depuración (no estándar).                                    | **Inyección oculta:** A menudo usada por frameworks internos para definir el host base. Ideal si `X-Forwarded-Host` está bloqueado.                                 |
+| **`Vary`**                    | Instruye a la caché sobre qué cabeceras hacen que la respuesta varíe (ej. `User-Agent`). | **Targeting:** Si la caché varía por `User-Agent`, debes envenenar la caché específica para el navegador de la víctima, no la global.                               |
+| **`X-Original-Url`**          | Usada por frameworks (como Symfony o ASP.NET) para sobreescribir la ruta solicitada.     | **Bypass de Cache Key:** Permite acceder a una ruta distinta a la que ve la caché, confundiendo al mecanismo de almacenamiento.                                     |
+| **`Pragma: x-get-cache-key`** | Cabecera de depuración (común en Akamai).                                                | **Reconocimiento:** Permite ver en la respuesta qué elementos forman exactamente la "Cache Key". Vital para ataques complejos.                                      |
 
 ---
 
@@ -367,7 +367,14 @@ Tú envenenas `data.host` usando `X-Forwarded-Host`.
     `Access-Control-Allow-Origin: *`
     
 5. Tu JSON malicioso contiene HTML (`<img src=x...>`) que el script legítimo inserta en el DOM mediante `innerHTML` o `appendChild`.
-    
+	
+Aqui conseguimos envenenar la cache con nuestro XSS pero todavia tenemos que conseguir forzar a la victima a que se le redirija al idioma vulnerable para ello utilizarmos la cabecera:
+
+```http
+X-Original-URL: /setlang\es
+```
+
+Con una barra invertida, para la web sigue siendo lo mismo pero evitamos que setea una cookie y se cachee la redirección en raíz hacia el idioma español en este caso
 
 ---
 

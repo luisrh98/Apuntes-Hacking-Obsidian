@@ -51,9 +51,7 @@ Debes probar cuántas columnas tiene la consulta original para que el UNION no f
 
 Utiliza la lógica de iteración que vimos antes:
 
-XML
-
-```
+```XML
 <storeId>
   <@hex_entities>
     1 UNION SELECT table_name FROM information_schema.tables LIMIT 1 OFFSET 0--

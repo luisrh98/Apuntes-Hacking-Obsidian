@@ -265,6 +265,8 @@ Bloquea:
 
 `stockApi=http%3a//127.1/%2561dmin/delete?username=carlos`
 
+>[!IMPORTANT] En el laboratorio de prueba hay que usar `http` menteniendo el protocolo original.
+
 ---
 ### 🔬 Técnicas aplicadas (en profundidad)
 
