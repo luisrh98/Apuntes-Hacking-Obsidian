@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/CL.TE y TE.CL - HTTP2 Ataques Avanzados.md",
+                "file": "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/Vulnerabilidades DOM-Based.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CL.TE y TE.CL - HTTP2 Ataques Avanzados"
+              "title": "Vulnerabilidades DOM-Based"
             }
           }
         ]
@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "ssti",
+                "query": "dom",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -74,7 +74,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -186,11 +187,16 @@
   },
   "active": "080f993e1816828e",
   "lastOpenFiles": [
+    "Hacking Notes/🔧 Utilidades/Recursos Examen BSCP/Scripts - DOM Vulnerabilities exploit server.md",
+    "Hacking Notes/🔧 Utilidades/Recursos Examen BSCP/Listas de usuarios y contraseñas.md",
+    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/Vulnerabilidades de Lógica de Negocio.md",
+    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/Gestión de Autenticación.md",
+    "Hacking Notes/🔧 Utilidades/Recursos Examen BSCP",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/CL.TE y TE.CL - HTTP1 Fundamentos y Explotacion.md",
-    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/0.CL, Pause-Based y Client-Side Desync - CSD.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/CL.TE y TE.CL - HTTP2 Ataques Avanzados.md",
+    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/0.CL, Pause-Based y Client-Side Desync - CSD.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🔀 HTTP Request Smuggling/Turbo Intruder - Request Smuggling.md",
-    "Hacking Notes/🔧 Utilidades/Entornos/Examen BSCP.md",
+    "Hacking Notes/🔧 Utilidades/Recursos Examen BSCP/Examen BSCP.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/SSTI - Server-Side Template Injection.md",
     "2026-03-08.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/🗄️ SQLi/SQLi Manual.md",
@@ -199,19 +205,15 @@
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/HTTP Host Header Attacks.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🧠 Lógica/Condiciones de Carrera - Race Condition.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/APIs - Pruebas de seguridad.md",
-    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/Gestión de Autenticación.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/Prototype Pollution & Class Pollution.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/XXE – XML External Entity Injection.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/🗄️ SQLi/SQL Injection vía XXE (XML Injection).md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/🗄️ SQLi/Out-of-Band SQL Injection (OOB).md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/SSRF - Server-Side Request Forgery.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/OAuth y OpenID Bypass.md",
-    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/Vulnerabilidades de Lógica de Negocio.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/Vulnerabilidades de Control de Acceso (Broken Access Control).md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/CORS - Cross-Origin Resource Sharing.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/JWT - Técnicas Avanzadas de Explotación y Bypass de Autenticación.md",
-    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/CSRF - Cross-Site Request Forgery.md",
-    "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/💉 Inyecciones/XPath Injection.md",
     "Hacking Notes/2 - 💥 Explotación/🌐 Explotacion Web/🧠 Cache",
     "Hacking Notes/🔧 Utilidades/Herramientas/Burpsuite",
     "Hacking Notes/🔧 Utilidades/Herramientas",
